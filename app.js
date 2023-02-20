@@ -1,14 +1,11 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-app.use(express.json());
+const { getCategories } = require("./controllers/gamesController");
 
-app.get('/api', (req, res) => {
-    res.status(200).send({msg: 'Connected'})
-})
+app.get("/api", (req, res, next) => {
+  res.status(200).send({ msg: "Connected" });
+});
 
+app.get("/api/categories", getCategories);
 
-//get to connect to api/categories
-//responds with an array of category objects 
-//with properties of slug and description
-
-module.exports = app
+module.exports = app;
