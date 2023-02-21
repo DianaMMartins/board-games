@@ -1,11 +1,23 @@
-const { selectCategories } = require("../models/gameModels");
+const { selectCategories, selectReviews } = require("../models/gameModels");
 
-exports.getCategories = (req, res, next) => {
+exports.getCategories = (request, response, next) => {
   selectCategories()
     .then((category) => {
-      res.status(200).send(category);
+      response.status(200).send(category);
     })
-    .catch((err) => {
-      next(err);
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.getReviews = (request, response, next) => {
+  const { sort_by } = request.query;
+
+  selectReviews(sort_by)
+    .then((reviews) => {
+      response.status(200).send(reviews);
+    })
+    .catch((error) => {
+      next(error);
     });
 };
