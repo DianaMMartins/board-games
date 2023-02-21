@@ -49,5 +49,36 @@ describe.only("app", () => {
           });
         });
     });
+    test("200: accepts a sort_by query of date in descending order", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=created_at")
+        .expect(200)
+        .then(({ body }) => {
+          const reviews = body;
+          expect(reviews.length).toBeGreaterThan(0);
+          const reviewsCopyArray = [...reviews];
+          const sortedReviews = reviewsCopyArray.sort((reviewA, reviewB) => {
+            // console.log(reviewA.created_at.substr(0, 10), 'a' , reviewB.created_at, 'b');
+            const reviewOne = reviewA.created_at.substr(0, 10);
+            const reviewTwo = reviewB.created_at.substr(0, 10);
+            if (reviewOne > reviewTwo) {
+              return -1;
+            } else if (reviewOne < reviewTwo) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          expect(sortedReviews).toEqual(reviews);
+        });
+    });
+  });
+  test("400: invalid sort by query", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=invalid_sort")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
   });
 });
