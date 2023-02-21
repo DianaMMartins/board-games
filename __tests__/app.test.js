@@ -12,7 +12,7 @@ afterAll(() => {
   connection.end();
 });
 
-describe.only("app", () => {
+describe("app", () => {
   describe("/api/categories", () => {
     test("200: responds with an array of categories", () => {
       return request(app)
@@ -58,7 +58,6 @@ describe.only("app", () => {
           expect(reviews.length).toBeGreaterThan(0);
           const reviewsCopyArray = [...reviews];
           const sortedReviews = reviewsCopyArray.sort((reviewA, reviewB) => {
-            // console.log(reviewA.created_at.substr(0, 10), 'a' , reviewB.created_at, 'b');
             const reviewOne = reviewA.created_at.substr(0, 10);
             const reviewTwo = reviewB.created_at.substr(0, 10);
             if (reviewOne > reviewTwo) {
