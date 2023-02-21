@@ -9,6 +9,9 @@ app.get("/api/categories", getCategories);
 
 app.get(`/api/reviews`, getReviews);
 
+app.use('*', (request, response, next) => {
+    response.status(404).send({ message: '404: Path not found!'})
+})
 app.use(handleCustomErrors);
 app.use((error, request, response, next) => {
   console.log(error);

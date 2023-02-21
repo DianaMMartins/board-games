@@ -14,8 +14,8 @@ exports.getReviews = (request, response, next) => {
   const { sort_by } = request.query;
 
   selectReviews(sort_by)
-    .then((review) => {
-      response.status(200).send(review);
+    .then((reviews) => {
+      response.status(200).send(reviews);
     })
     .catch((error) => {
       next(error);

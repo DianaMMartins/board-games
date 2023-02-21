@@ -3,6 +3,7 @@ const app = require("../app.js");
 const connection = require("../db/connection.js");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed.js");
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(data);
@@ -18,8 +19,8 @@ describe("app", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then((body) => {
-          const categories = body.body;
+        .then(({ body }) => {
+          const categories = body;
           expect(categories.length).toBeGreaterThan(0);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
@@ -47,6 +48,8 @@ describe("app", () => {
             expect(review).toHaveProperty("designer", expect.any(String));
             expect(review).toHaveProperty("comment_count", expect.any(Number));
           });
+          const expectArray = reviews.map(review => review.comment_count);
+          expect(expectArray).toEqual([0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0]);
         });
     });
     test("200: accepts a sort_by query of date in descending order", () => {
@@ -56,19 +59,10 @@ describe("app", () => {
         .then(({ body }) => {
           const reviews = body;
           expect(reviews.length).toBeGreaterThan(0);
-          const reviewsCopyArray = [...reviews];
-          const sortedReviews = reviewsCopyArray.sort((reviewA, reviewB) => {
-            const reviewOne = reviewA.created_at.substr(0, 10);
-            const reviewTwo = reviewB.created_at.substr(0, 10);
-            if (reviewOne > reviewTwo) {
-              return -1;
-            } else if (reviewOne < reviewTwo) {
-              return 1;
-            } else {
-              return 0;
-            }
+          expect(reviews).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: false,
           });
-          expect(sortedReviews).toEqual(reviews);
         });
     });
   });
@@ -81,3 +75,5 @@ describe("app", () => {
       });
   });
 });
+
+//test for 404 bad path misspelled
