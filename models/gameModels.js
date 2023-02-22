@@ -35,11 +35,25 @@ exports.selectReviews = (sort_by) => {
 };
 
 exports.fetchReviewById = (id) => {
-    return db.query(`SELECT * FROM reviews WHERE review_id = $1`, [id]).then((result) => {
-        if(result.rowCount === 0) {
-            return Promise.reject("Can't find review");
-        } else { 
-            return result.rows[0];
-        }
-    })
-}
+  return db
+    .query(`SELECT * FROM reviews WHERE review_id = $1`, [id])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject("Can't find review");
+      } else {
+        return result.rows[0];
+      }
+    });
+};
+
+exports.fetchCommentsFromReview = (id) => {
+  let queryString = "SELECT * FROM comments";
+
+  if (id !== undefined) {
+    queryString += ` WHERE review_id = ${id} ORDER BY created_at DESC`;
+  }
+
+  return db.query(queryString).then((results) => {
+    return results.rows;
+  });
+};
