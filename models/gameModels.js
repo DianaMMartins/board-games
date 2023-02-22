@@ -11,7 +11,7 @@ exports.selectReviews = (sort_by) => {
   const validSortOptions = ["created_at"];
 
   if (sort_by && !validSortOptions.includes(sort_by)) {
-    return Promise.reject("Invalid sorting option entered!");
+    return Promise.reject("Invalid sorting!");
   }
 
   let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count 
@@ -36,7 +36,10 @@ exports.selectReviews = (sort_by) => {
 
 exports.fetchReviewById = (id) => {
     return db.query(`SELECT * FROM reviews WHERE review_id = $1`, [id]).then((result) => {
-        console.log(result.rows);
-        return result.rows[0]
+        if(result.rowCount === 0) {
+            return Promise.reject("Can't find review");
+        } else { 
+            return result.rows[0];
+        }
     })
 }

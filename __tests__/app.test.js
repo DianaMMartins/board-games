@@ -66,13 +66,53 @@ describe("app", () => {
         });
     });
   });
-  test("400: invalid sort by query", () => {
-    return request(app)
-      .get("/api/reviews?sort_by=invalid_sort")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
-      });
+  describe("/api/reviews?sort_by", () => {
+    test("400: invalid sort by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=invalid_sort")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid Request");
+        });
+    });
+  });
+  describe("/api/review/:review_id", () => {
+    test("200: GET responds with a single review object", () => {
+      return request(app)
+        .get("/api/reviews/2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            category: "dexterity",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_body: "Fiddly fun for all the family",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 5,
+          });
+        });
+    });
+    test("400: GET invalid review_id endpoint", () => {
+        return request(app)
+        .get("/api/reviews/cake")
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.message).toBe("Bad request!");
+        });
+        
+    })
+    test("404: GET responds with error message if requested review doesn't exist but is valid", () => {
+      return request(app)
+        .get("/api/reviews/2000")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.message).toBe("Path not found!");
+        });
+    });
   });
   describe("/anyWrongPath", () => {
     test("404: invalid sort request", () => {
@@ -84,26 +124,4 @@ describe("app", () => {
         });
     });
   });
-  describe("/api/snacks/:snack_id", () => {
-    test("200: GET responds with a single review object", () => {
-      return request(app)
-        .get("/api/reviews/2")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.review).toEqual({
-                review_id: 2,
-                title: 'Jenga',
-                category: 'dexterity',
-                designer: 'Leslie Scott',
-                owner: 'philippaclaire9',
-                review_body: 'Fiddly fun for all the family',
-                review_img_url: 'https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700',
-                created_at: '2021-01-18T10:01:41.251Z',
-                votes: 5
-          });
-        });
-    });
-  });
 });
-
-//test for 404 bad path misspelled
