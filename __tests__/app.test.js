@@ -128,6 +128,15 @@ describe("app", () => {
           expect(Array.isArray(comments)).toBe(true);
         });
     });
+    test("200: GET responds with an empty array if no comment exists", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments.length).toBe(0);
+        });
+    });
     test("200: GET responds with an array of comments as objects with specific properties", () => {
       return request(app)
         .get("/api/reviews/2/comments")
