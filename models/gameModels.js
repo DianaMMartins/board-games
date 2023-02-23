@@ -48,12 +48,14 @@ exports.fetchReviewById = (id) => {
 
 exports.fetchCommentsFromReview = (id) => {
   let queryString = "SELECT * FROM comments";
+  const query =[];
 
   if (id !== undefined) {
-    queryString += ` WHERE review_id = ${id} ORDER BY created_at DESC`;
+    queryString += ` WHERE review_id = $1 ORDER BY created_at DESC`;
+    query.push(id)
   }
 
-  return db.query(queryString).then((results) => {
+  return db.query(queryString, query).then((results) => {
     return results.rows;
   });
 };
