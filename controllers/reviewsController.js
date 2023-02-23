@@ -14,6 +14,7 @@ exports.getReviews = (request, response, next) => {
 
 exports.getReviewById = (request, response, next) => {
   const { review_id } = request.params;
+
   fetchReviewById(review_id)
     .then((review) => {
       response.status(200).send({ review });
@@ -27,6 +28,12 @@ exports.patchReviewById = (request, response, next) => {
   const { inc_votes } = request.body;
   const { review_id } = request.params;
 
+  console.log(request, review_id);
+  if (inc_votes === undefined) {
+    console.log("hello");
+    return Promise.reject({ message: "Invalid data!", status: 400 });
+  }
+  // fetchReviewById(request)
   fetchReviewById(review_id)
     .then((review) => {
       review.votes += inc_votes;

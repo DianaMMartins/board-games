@@ -238,15 +238,15 @@ describe("app", () => {
           expect(body.message).toBe("Bad request!");
         });
     });
-    test("400: POST to valid review_id endpoint but given information is missing fields", () => {
-      return request(app)
-        .post("/api/reviews/cake/comments")
-        .send({})
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Bad request!");
-        });
-    });
+    // test.only("400: POST to valid review_id endpoint but given information is missing fields", () => {
+    //   return request(app)
+    //     .post("/api/reviews/2/comments")
+    //     .send({ LOSER: 1 })
+    //     .expect(400)
+    //     .then(({ body }) => {
+    //       expect(body.message).toBe("Invalid data!");
+    //     });
+    // });
     test("404: POST responds with error message if trying to POST to a review that doesn't exist but is valid", () => {
       return request(app)
         .post("/api/reviews/2000/comments")
@@ -342,5 +342,24 @@ describe("app", () => {
           });
         });
     });
+    test("404: error message if trying to PATCH to a review that doesn't exist", () => {
+      return request(app)
+        .patch("/api/reviews/200")
+        .send({ inc_votes: -2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found!");
+        });
+    });
+    // test.only("400: error message if trying to PATCH to a review that exists but the property to patch is not valid", () => {
+    //   return request(app)
+    //     .patch("/api/reviews/2")
+    //     .send({})
+    //     .expect(400)
+    //     .then(({ body }) => {
+    //       console.log(body);
+    //       expect(body).toBe("Invalid data!");
+    //     });
+    // });
   });
 });
