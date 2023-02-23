@@ -63,9 +63,7 @@ exports.fetchCommentsFromReview = (id) => {
 
 exports.insertComment = (id, properties) => {
   const { username, body } = properties;
-  // console.log(username);
-  //need to go into table for users and check if username exists
-
+ 
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [username])
     .then((results) => {
@@ -76,7 +74,6 @@ exports.insertComment = (id, properties) => {
             [body, username, id]
           )
           .then((result) => {
-            console.log(result.rows[0]);
             return result.rows;
           });
       } else {

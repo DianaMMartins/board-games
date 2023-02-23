@@ -117,7 +117,6 @@ describe("app", () => {
         });
     });
   });
-
   describe("/api/review/:review_id/comments", () => {
     test("200: GET responds with an array", () => {
       return request(app)
@@ -187,21 +186,14 @@ describe("app", () => {
         });
     });
   });
-
   describe("POST /api/reviews/:review_id/comments", () => {
-    // request body accepts  an object with username and body
-    // responds with POSTed comment
     test("201: responds with newly created comment", () => {
-      // const requestBody = {
-      //   username: "TheCakeIsALie",
-      //   body: "A fun afternoon! Definitely recommend!!!",
-      // };
       return request(app)
         .post("/api/reviews/2/comments")
         .expect(201)
         .send({
           username: "philippaclaire9",
-          body: "A fun afternoon! Definitely recommend!!!"
+          body: "A fun afternoon! Definitely recommend!!!",
         })
         .then(({ body }) => {
           expect(body.comment).toMatchObject({
@@ -214,7 +206,27 @@ describe("app", () => {
           });
         });
     });
-    test("400: GET invalid review_id endpoint when trying to POST comments", () => {
+    test("201: responds with newly created comment, but ignores any unnecessary properties", () => {
+      return request(app)
+        .post("/api/reviews/2/comments")
+        .expect(201)
+        .send({
+          username: "philippaclaire9",
+          body: "A fun afternoon! Definitely recommend!!!",
+          cake: 'BlackForest'
+        })
+        .then(({ body }) => {
+          expect(body.comment).toMatchObject({
+            comment_id: 7,
+            body: "A fun afternoon! Definitely recommend!!!",
+            votes: 0,
+            author: "philippaclaire9",
+            review_id: 2,
+            created_at: expect.any(String),
+          });
+        });
+    });
+    test("400: POST invalid review_id endpoint when trying to POST comments", () => {
       return request(app)
         .post("/api/reviews/cake/comments")
         .send({
@@ -226,7 +238,16 @@ describe("app", () => {
           expect(body.message).toBe("Bad request!");
         });
     });
-    test("404: GET responds with error message if trying to POST to a review that doesn't exist but is valid", () => {
+    test("400: POST to valid review_id endpoint but given information is missing fields", () => {
+      return request(app)
+        .post("/api/reviews/cake/comments")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request!");
+        });
+    });
+    test("404: POST responds with error message if trying to POST to a review that doesn't exist but is valid", () => {
       return request(app)
         .post("/api/reviews/2000/comments")
         .send({
@@ -238,7 +259,7 @@ describe("app", () => {
           expect(body.message).toBe("Path not found!");
         });
     });
-    test("404: GET responds with error message if trying to POST to a review that exist but the data given is not valid", () => {
+    test("404: POST responds with error message if trying to POST to a review that exist but the username given is not valid", () => {
       return request(app)
         .post("/api/reviews/2/comments")
         .send({
