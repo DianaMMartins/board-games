@@ -1,22 +1,29 @@
 const express = require("express");
+const app = express();
 const {
   handleCustomErrors,
   handlePSQL400s,
   handle500sErrors,
 } = require("./controllers/errorHandlingControllers");
-const app = express();
 const {
-  getCategories,
+  getCommentsOfReview,
+  postComment,
+} = require("./controllers/commentsController");
+const {
   getReviews,
   getReviewById,
-  getCommentsOfReview,
-} = require("./controllers/gamesController");
+} = require("./controllers/reviewsController");
+const { getCategories } = require("./controllers/categoriesController");
+
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
 app.get(`/api/reviews`, getReviews);
 
 app.get(`/api/reviews/:review_id`, getReviewById);
+
+app.post(`/api/reviews/:review_id/comments`, postComment);
 
 app.get(`/api/reviews/:review_id/comments`, getCommentsOfReview);
 

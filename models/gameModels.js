@@ -1,3 +1,4 @@
+const { use } = require("../app.js");
 const db = require("../db/connection.js");
 const { reviewData } = require("../db/data/test-data/index.js");
 
@@ -48,14 +49,34 @@ exports.fetchReviewById = (id) => {
 
 exports.fetchCommentsFromReview = (id) => {
   let queryString = "SELECT * FROM comments";
-  const query =[];
+  const query = [];
 
   if (id !== undefined) {
     queryString += ` WHERE review_id = $1 ORDER BY created_at DESC`;
-    query.push(id)
+    query.push(id);
   }
 
   return db.query(queryString, query).then((results) => {
     return results.rows;
   });
+};
+
+exports.insertComment = (id, properties) => {
+  const { username, body } = properties;
+ 
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .then((results) => {
+      if (results.rowCount > 0) {
+        return db
+          .query(
+            "INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *",
+            [body, username, id]
+          )
+          .then((result) => {
+            return result.rows;
+          });
+      } else {
+        return Promise.reject("Invalid data!");      }
+    });
 };
