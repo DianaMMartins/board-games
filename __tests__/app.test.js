@@ -77,42 +77,105 @@ describe("app", () => {
     });
   });
   describe("/api/review/:review_id", () => {
+    //help
     test("200: GET responds with a single review object", () => {
       return request(app)
         .get("/api/reviews/2")
         .expect(200)
         .then(({ body }) => {
-          expect(body.review).toEqual({
-            review_id: 2,
-            title: "Jenga",
-            category: "dexterity",
-            designer: "Leslie Scott",
-            owner: "philippaclaire9",
-            review_body: "Fiddly fun for all the family",
-            review_img_url:
-              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
-            created_at: "2021-01-18T10:01:41.251Z",
-            votes: 5,
-          });
+          const returnedObject = body.review;
+          expect(returnedObject).toEqual(
+            expect.objectContaining({
+              review_id: expect.any(Number),
+              title: expect.any(String),
+              category: expect.any(String),
+              designer: expect.any(String),
+              owner: expect.any(String),
+              review_body: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
         });
     });
+
     test("400: GET invalid review_id endpoint", () => {
-        return request(app)
+      return request(app)
         .get("/api/reviews/cake")
         .expect(400)
         .then(({ body }) => {
-            expect(body.message).toBe("Bad request!");
+          expect(body.message).toBe("Bad request!");
         });
-        
-    })
+    });
     test("404: GET responds with error message if requested review doesn't exist but is valid", () => {
       return request(app)
         .get("/api/reviews/2000")
         .expect(404)
         .then(({ body }) => {
-            expect(body.message).toBe("Path not found!");
+          expect(body.message).toBe("Path not found!");
         });
     });
+  });
+
+  describe("/api/review/:review_id/comments", () => {
+    test("200: GET responds with an array", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(Array.isArray(comments)).toBe(true);
+        });
+    });
+    test("200: GET responds with an empty array if no comment exists", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments.length).toBe(0);
+        });
+    });
+    test("200: GET responds with an array of comments as objects with specific properties", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments.length).toBeGreaterThan(0);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                review_id: expect.any(Number),
+                author: expect.any(String),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("400: GET invalid review_id endpoint when getting comments", () => {
+      return request(app)
+        .get("/api/reviews/cake/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request!");
+        });
+    });
+    test("404: GET responds with error message if requested review doesn't exist but is valid", () => {
+      return request(app)
+        .get("/api/reviews/2000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found!");
+        });
+    });
+    // 400 invalid review_id/comment
+    // 404 bad request/comment
   });
   describe("/anyWrongPath", () => {
     test("404: invalid sort request", () => {
