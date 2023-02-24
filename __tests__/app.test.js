@@ -230,7 +230,7 @@ describe("app", () => {
         .send({
           username: "philippaclaire9",
           body: "A fun afternoon! Definitely recommend!!!",
-          cake: 'BlackForest'
+          cake: "BlackForest",
         })
         .then(({ body }) => {
           expect(body.comment).toMatchObject({
@@ -257,11 +257,11 @@ describe("app", () => {
     });
     test("400: POST to valid review_id endpoint but given information is missing fields", () => {
       return request(app)
-        .post("/api/reviews/cake/comments")
-        .send({})
+        .post("/api/reviews/2/comments")
+        .send({ LOSER: 1 })
         .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Bad request!");
+        .then(({body}) => {
+          expect(body.message).toBe("Invalid property!");
         });
     });
     test("404: POST responds with error message if trying to POST to a review that doesn't exist but is valid", () => {
@@ -286,6 +286,102 @@ describe("app", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.message).toBe("Invalid data!");
+        });
+    });
+  });
+  describe("PATCH: /api/reviews/:review_id", () => {
+    test("200: PATCH RETURNS with an object of updated review", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          // console.log(review);
+          // expect(review.length).toBeGreaterThan(0);
+          expect(review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 6,
+          });
+        });
+    });
+    test("200: PATCH RETURNS with an object of updated review, make sure it works for negative numbers", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: -2 })
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          // console.log(review);
+          // expect(review.length).toBeGreaterThan(0);
+          expect(review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 3,
+          });
+        });
+    });
+    test("200: PATCH RETURNS with an object of updated review, when all votes have been removed, set value at 0", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: -200 })
+        .expect(200)
+        .then(({ body }) => {
+          const { review } = body;
+          expect(review).toEqual({
+            review_id: 2,
+            title: "Jenga",
+            designer: "Leslie Scott",
+            owner: "philippaclaire9",
+            review_img_url:
+              "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+            review_body: "Fiddly fun for all the family",
+            category: "dexterity",
+            created_at: "2021-01-18T10:01:41.251Z",
+            votes: 0,
+          });
+        });
+    });
+    test("404: error message if trying to PATCH to a review that doesn't exist", () => {
+      return request(app)
+        .patch("/api/reviews/200")
+        .send({ inc_votes: -2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found!");
+        });
+    });
+    test("400: error message if trying to PATCH to a review that exists but the property to patch is not valid", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid property!");
+        });
+    });
+    test("400: error message if trying to PATCH to a review that exists but the property to patch is not valid", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ key: 5 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid property!");
         });
     });
   });

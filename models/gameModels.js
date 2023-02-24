@@ -63,7 +63,11 @@ exports.fetchCommentsFromReview = (id) => {
 
 exports.insertComment = (id, properties) => {
   const { username, body } = properties;
- 
+  console.log(username);
+
+  if (username === undefined) {
+    return Promise.reject("Property not found!")
+  }
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [username])
     .then((results) => {
@@ -77,6 +81,7 @@ exports.insertComment = (id, properties) => {
             return result.rows;
           });
       } else {
-        return Promise.reject("Invalid data!");      }
+        return Promise.reject("Invalid data!");
+      }
     });
 };
