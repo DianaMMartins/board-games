@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  describe.only("/api/users", () => {
+  describe("/api/users", () => {
     test("200: responds with an array of users", () => {
       return request(app)
         .get("/api/users")
@@ -68,30 +68,55 @@ describe("app", () => {
           expect(expectArray).toEqual([0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0]);
         });
     });
-    test("200: accepts a sort_by query of date in descending order", () => {
-      return request(app)
-        .get("/api/reviews?sort_by=created_at")
-        .expect(200)
-        .then(({ body }) => {
-          const reviews = body;
-          expect(reviews.length).toBeGreaterThan(0);
-          expect(reviews).toBeSortedBy("created_at", {
-            descending: true,
-            coerce: false,
-          });
-        });
-    });
   });
-  describe("/api/reviews?sort_by", () => {
-    test("400: invalid sort by query", () => {
-      return request(app)
+  describe('/api/reviews queries', ()=>{
+    describe("/api/reviews?sort_by", () => {
+      test("200: accepts a sort_by query of date in descending order", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=created_at")
+          .expect(200)
+          .then(({ body }) => {
+            const reviews = body;
+            expect(reviews.length).toBeGreaterThan(0);
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+              coerce: false,
+            });
+          });
+      });
+      test("400: invalid sort by query", () => {
+        return request(app)
         .get("/api/reviews?sort_by=invalid_sort")
         .expect(400)
         .then(({ body }) => {
           expect(body.message).toBe("Invalid Request");
         });
+      });  
     });
-  });
+    describe("/api/reviews?select_category", () => {
+      test("200: accepts a select_category query and returns an object with all reviews in that category", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=created_at")
+          .expect(200)
+          .then(({ body }) => {
+            const reviews = body;
+            expect(reviews.length).toBeGreaterThan(0);
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+              coerce: false,
+            });
+          });
+      });
+      test("400: invalid sort by query", () => {
+        return request(app)
+        .get("/api/reviews?sort_by=invalid_sort")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid Request");
+        });
+      });  
+    });
+  })
   describe("/api/review/:review_id", () => {
     test("200: GET responds with a single review object", () => {
       return request(app)

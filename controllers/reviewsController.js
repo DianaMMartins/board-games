@@ -3,6 +3,10 @@ const { selectReviews, fetchReviewById } = require("../models/gameModels");
 exports.getReviews = (request, response, next) => {
   const { sort_by } = request.query;
 
+//select_category //if none give all reviews
+//sort_by should sort by any column default of date
+//order can be asc or desc
+  console.log(sort_by);
   selectReviews(sort_by)
     .then((reviews) => {
       response.status(200).send(reviews);

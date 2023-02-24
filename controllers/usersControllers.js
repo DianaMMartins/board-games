@@ -2,8 +2,8 @@ const { selectUsers } = require("../models/userModels");
 
 exports.getUsers = (request, response, next) => {
   selectUsers()
-    .then((user) => {
-      response.status(200).send(user);
+    .then((users) => {
+      response.status(200).send(users);
     })
     .catch((error) => {
       next(error);
