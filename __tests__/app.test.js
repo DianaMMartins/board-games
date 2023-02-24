@@ -14,22 +14,21 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  describe("/api/users", () => {
-  //   test("200: responds with an array of users", () => {
-  //     return request(app)
-  //       .get("/api/users")
-  //       .expect(200)
-  //       .then(({ body }) => {
-  //         console.log(body);
-  //         const users = body;
-  //         expect(users.length).toBeGreaterThan(0);
-  //         users.forEach((user) => {
-  //           expect(user).toHaveProperty("username", expect.any(String));
-  //           expect(user).toHaveProperty("name", expect.any(String));
-  //           expect(user).toHaveProperty("avatar_url", expect.any(String));
-  //         });
-  //       });
-  //   });
+  describe.only("/api/users", () => {
+    test("200: responds with an array of users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const users = body;
+          expect(users.length).toBeGreaterThan(0);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
+        });
+    });
   });
   describe("/api/categories", () => {
     test("200: responds with an array of categories", () => {
@@ -94,7 +93,6 @@ describe("app", () => {
     });
   });
   describe("/api/review/:review_id", () => {
-    //help
     test("200: GET responds with a single review object", () => {
       return request(app)
         .get("/api/reviews/2")
@@ -190,8 +188,6 @@ describe("app", () => {
           expect(body.message).toBe("Path not found!");
         });
     });
-    // 400 invalid review_id/comment
-    // 404 bad request/comment
   });
   describe("/anyWrongPath", () => {
     test("404: invalid sort request", () => {
@@ -260,7 +256,7 @@ describe("app", () => {
         .post("/api/reviews/2/comments")
         .send({ LOSER: 1 })
         .expect(400)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.message).toBe("Invalid property!");
         });
     });
@@ -297,8 +293,6 @@ describe("app", () => {
         .expect(200)
         .then(({ body }) => {
           const { review } = body;
-          // console.log(review);
-          // expect(review.length).toBeGreaterThan(0);
           expect(review).toEqual({
             review_id: 2,
             title: "Jenga",
@@ -320,8 +314,6 @@ describe("app", () => {
         .expect(200)
         .then(({ body }) => {
           const { review } = body;
-          // console.log(review);
-          // expect(review.length).toBeGreaterThan(0);
           expect(review).toEqual({
             review_id: 2,
             title: "Jenga",

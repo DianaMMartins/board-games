@@ -12,11 +12,9 @@ const {
 const {
   getReviews,
   getReviewById,
-  patchReviewById
+  patchReviewById,
 } = require("./controllers/reviewsController");
-const {
-  getUsers
-} = require("./controllers/usersControllers");
+const { getUsers } = require("./controllers/usersControllers");
 
 const { getCategories } = require("./controllers/categoriesController");
 
