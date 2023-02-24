@@ -20,7 +20,6 @@ exports.getReviewById = (request, response, next) => {
       response.status(200).send({ review });
     })
     .catch((error) => {
-      console.log(error);
       next(error);
     });
 };
