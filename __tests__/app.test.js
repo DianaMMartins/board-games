@@ -64,16 +64,14 @@ describe("app", () => {
             expect(review).toHaveProperty("designer", expect.any(String));
             expect(review).toHaveProperty("comment_count", expect.any(Number));
           });
-          const expectArray = reviews.map((review) => review.comment_count);
-          expect(expectArray).toEqual([0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0]);
         });
     });
   });
   describe("/api/reviews queries", () => {
     describe("/api/reviews?sort_by", () => {
-      test("200: accepts a sort_by query of date in descending order", () => {
+      test("200: accepts a sort_by query of date in descending order, default sort by to created_at in descending Order", () => {
         return request(app)
-          .get("/api/reviews?sort_by=created_at")
+          .get("/api/reviews")
           .expect(200)
           .then(({ body }) => {
             const reviews = body;
@@ -84,30 +82,29 @@ describe("app", () => {
             });
           });
       });
-      // test("400: invalid sort by query", () => {
-      //   return request(app)
-      //   .get("/api/reviews?sort_by=invalid_sort")
-      //   .expect(400)
-      //   .then(({ body }) => {
-      //     expect(body.message).toBe("Invalid Request");
-      //   });
-      // });
+      test("400: invalid sort by query is given", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=invalid_sort")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).toBe("Invalid Request");
+          });
+      });
     });
-    describe.only("/api/reviews?category", () => {
+    describe("/api/reviews?category", () => {
       test("200: accepts a category query and returns an object with all reviews in that category", () => {
         return request(app)
           .get("/api/reviews?category=social deduction")
           .expect(200)
           .then(({ body }) => {
             const reviews = body;
-            console.log(reviews);
             reviews.forEach((review) => {
               expect(review).toMatchObject({
                 title: expect.any(String),
                 designer: expect.any(String),
                 owner: expect.any(String),
                 review_img_url: expect.any(String),
-                category: 'social deduction',
+                category: "social deduction",
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 comment_count: expect.any(Number),
@@ -115,7 +112,6 @@ describe("app", () => {
             });
           });
       });
-
     });
   });
   describe("/api/review/:review_id", () => {

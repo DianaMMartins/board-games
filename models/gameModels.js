@@ -17,40 +17,34 @@ exports.selectCategoriesFromReviews = () => {
     });
 };
 
-//needs 3 arguments, category = '*',  sort_by = 'created_at',  order = 'decs'
 exports.selectReviews = (category, sort_by, order) => {
-  // const validColumns = [
-  //   "created_at",
-  //   "title",
-  //   "designer",
-  //   "owner",
-  //   "review_img_url",
-  //   "review_body",
-  //   "category",
-  //   "votes",
-  // ];
-  // if (clientRequest === sort_by && !validSortOptions.includes(sort_by)) {
-  //   return Promise.reject("Invalid sorting!");
-  //NOW defaults to date
-  // }
-  let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+  const validSortOptions = [
+    "created_at",
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "votes",
+  ];
+  if (!validSortOptions.includes(sort_by)) {
+    return Promise.reject("Invalid sorting!");
+  }
+
+  let queryString = `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
   const query = [];
 
   if (category !== undefined) {
-    queryString += ` WHERE category = $1`;
+    queryString += ` WHERE reviews.category = $1`;
     query.push(category);
   }
-  if (sort_by && category !== undefined) {
-    queryString += ` GROUP BY reviews.review_id ORDER BY $2`;
-    query.push(sort_by);
+  queryString += ` GROUP BY reviews.review_id ORDER BY ${sort_by}`;
+  if (order === "ASC") {
+    queryString += ` ASC;`;
   } else {
-    queryString += ` GROUP BY reviews.review_id ORDER BY $1`;
-    query.push(sort_by);
+    queryString += " DESC;";
   }
-  if (order === "DESC") {
-    queryString += ` DESC`;
-  }
-
   return db.query(queryString, query).then((response) => {
     const clonedResponse = JSON.parse(JSON.stringify(response.rows));
     const newArray = clonedResponse.map((object) => {
@@ -90,7 +84,6 @@ exports.fetchCommentsFromReview = (id) => {
 
 exports.insertComment = (id, properties) => {
   const { username, body } = properties;
-  console.log(username);
 
   if (username === undefined) {
     return Promise.reject("Property not found!");
