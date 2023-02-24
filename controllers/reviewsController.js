@@ -20,6 +20,7 @@ exports.getReviewById = (request, response, next) => {
       response.status(200).send({ review });
     })
     .catch((error) => {
+      console.log(error);
       next(error);
     });
 };
@@ -28,14 +29,11 @@ exports.patchReviewById = (request, response, next) => {
   const { inc_votes } = request.body;
   const { review_id } = request.params;
 
-  console.log(request, review_id);
-  if (inc_votes === undefined) {
-    console.log("hello");
-    return Promise.reject({ message: "Invalid data!", status: 400 });
-  }
-  // fetchReviewById(request)
   fetchReviewById(review_id)
     .then((review) => {
+      if ( inc_votes === undefined) {
+        return Promise.reject('Property not found!')
+      }
       review.votes += inc_votes;
       if (Math.sign(inc_votes) === -1 && review.votes < 0) {
         review.votes = 0;

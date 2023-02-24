@@ -36,16 +36,6 @@ exports.selectReviews = (sort_by) => {
 };
 
 exports.fetchReviewById = (id) => {
-  // console.log(id, typeof id, Number(id));
-  //check if id is valid
-  // if id is not valid
-  // if (id is not a number) {
-  // return Promise.reject('Property not found!')
-  // }
-  // if ID is valid
-
-  // console.log(id);
-  // console.log(id);
   return db
     .query(`SELECT * FROM reviews WHERE review_id = $1`, [id])
     .then((result) => {
@@ -73,7 +63,11 @@ exports.fetchCommentsFromReview = (id) => {
 
 exports.insertComment = (id, properties) => {
   const { username, body } = properties;
+  console.log(username);
 
+  if (username === undefined) {
+    return Promise.reject("Property not found!")
+  }
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [username])
     .then((results) => {
