@@ -14,6 +14,23 @@ afterAll(() => {
 });
 
 describe("app", () => {
+  describe("/api/users", () => {
+  //   test("200: responds with an array of users", () => {
+  //     return request(app)
+  //       .get("/api/users")
+  //       .expect(200)
+  //       .then(({ body }) => {
+  //         console.log(body);
+  //         const users = body;
+  //         expect(users.length).toBeGreaterThan(0);
+  //         users.forEach((user) => {
+  //           expect(user).toHaveProperty("username", expect.any(String));
+  //           expect(user).toHaveProperty("name", expect.any(String));
+  //           expect(user).toHaveProperty("avatar_url", expect.any(String));
+  //         });
+  //       });
+  //   });
+  });
   describe("/api/categories", () => {
     test("200: responds with an array of categories", () => {
       return request(app)

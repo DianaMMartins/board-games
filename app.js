@@ -13,9 +13,15 @@ const {
   getReviews,
   getReviewById,
 } = require("./controllers/reviewsController");
+const {
+  getUsers
+} = require("./controllers/usersControllers");
+
 const { getCategories } = require("./controllers/categoriesController");
 
 app.use(express.json());
+
+app.get("/api/users", getUsers);
 
 app.get("/api/categories", getCategories);
 
