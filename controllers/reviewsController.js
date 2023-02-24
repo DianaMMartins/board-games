@@ -1,19 +1,25 @@
-const { selectReviews, fetchReviewById } = require("../models/gameModels");
+const { selectReviews, fetchReviewById, selectCategoriesFromReviews } = require("../models/gameModels");
 
 exports.getReviews = (request, response, next) => {
-  const { sort_by } = request.query;
-
-//select_category //if none give all reviews
-//sort_by should sort by any column default of date
-//order can be asc or desc
-  console.log(sort_by);
-  selectReviews(sort_by)
-    .then((reviews) => {
-      response.status(200).send(reviews);
+  let { category, sort_by, order} = request.query;
+  const validateCategories = selectCategoriesFromReviews();
+  Promise.all([validateCategories]).then(([categories])=>{
+    categories.forEach((property) =>{
+      if (!Object.values(property)[0] === category) {
+        // return Promise.reject('Invalid category')
+      }
     })
-    .catch((error) => {
-      next(error);
-    });
+  })
+  if (sort_by === undefined) {sort_by = 'created_at'}
+  if (order !== 'ASC') {order = 'DESC'}
+
+selectReviews(category, sort_by, order)
+  .then((reviews) => {
+    response.status(200).send(reviews);
+  })
+  .catch((error) => {
+    next(error);
+  });
 };
 
 exports.getReviewById = (request, response, next) => {
@@ -34,8 +40,8 @@ exports.patchReviewById = (request, response, next) => {
 
   fetchReviewById(review_id)
     .then((review) => {
-      if ( inc_votes === undefined) {
-        return Promise.reject('Property not found!')
+      if (inc_votes === undefined) {
+        return Promise.reject("Property not found!");
       }
       review.votes += inc_votes;
       if (Math.sign(inc_votes) === -1 && review.votes < 0) {

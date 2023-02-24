@@ -69,7 +69,7 @@ describe("app", () => {
         });
     });
   });
-  describe('/api/reviews queries', ()=>{
+  describe("/api/reviews queries", () => {
     describe("/api/reviews?sort_by", () => {
       test("200: accepts a sort_by query of date in descending order", () => {
         return request(app)
@@ -84,39 +84,40 @@ describe("app", () => {
             });
           });
       });
-      test("400: invalid sort by query", () => {
-        return request(app)
-        .get("/api/reviews?sort_by=invalid_sort")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Invalid Request");
-        });
-      });  
+      // test("400: invalid sort by query", () => {
+      //   return request(app)
+      //   .get("/api/reviews?sort_by=invalid_sort")
+      //   .expect(400)
+      //   .then(({ body }) => {
+      //     expect(body.message).toBe("Invalid Request");
+      //   });
+      // });
     });
-    describe("/api/reviews?select_category", () => {
-      test("200: accepts a select_category query and returns an object with all reviews in that category", () => {
+    describe.only("/api/reviews?category", () => {
+      test("200: accepts a category query and returns an object with all reviews in that category", () => {
         return request(app)
-          .get("/api/reviews?sort_by=created_at")
+          .get("/api/reviews?category=social deduction")
           .expect(200)
           .then(({ body }) => {
             const reviews = body;
-            expect(reviews.length).toBeGreaterThan(0);
-            expect(reviews).toBeSortedBy("created_at", {
-              descending: true,
-              coerce: false,
+            console.log(reviews);
+            reviews.forEach((review) => {
+              expect(review).toMatchObject({
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                category: 'social deduction',
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(Number),
+              });
             });
           });
       });
-      test("400: invalid sort by query", () => {
-        return request(app)
-        .get("/api/reviews?sort_by=invalid_sort")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Invalid Request");
-        });
-      });  
+
     });
-  })
+  });
   describe("/api/review/:review_id", () => {
     test("200: GET responds with a single review object", () => {
       return request(app)

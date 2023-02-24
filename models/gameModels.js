@@ -1,5 +1,6 @@
 const { use } = require("../app.js");
 const db = require("../db/connection.js");
+const categories = require("../db/data/test-data/categories.js");
 const { reviewData } = require("../db/data/test-data/index.js");
 
 exports.selectCategories = () => {
@@ -8,23 +9,49 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (sort_by) => {
-  const validSortOptions = ["created_at"];
+exports.selectCategoriesFromReviews = () => {
+  return db
+    .query(`SELECT category FROM reviews GROUP BY category`)
+    .then((response) => {
+      return response.rows;
+    });
+};
 
-  if (sort_by && !validSortOptions.includes(sort_by)) {
-    return Promise.reject("Invalid sorting!");
+//needs 3 arguments, category = '*',  sort_by = 'created_at',  order = 'decs'
+exports.selectReviews = (category, sort_by, order) => {
+  // const validColumns = [
+  //   "created_at",
+  //   "title",
+  //   "designer",
+  //   "owner",
+  //   "review_img_url",
+  //   "review_body",
+  //   "category",
+  //   "votes",
+  // ];
+  // if (clientRequest === sort_by && !validSortOptions.includes(sort_by)) {
+  //   return Promise.reject("Invalid sorting!");
+  //NOW defaults to date
+  // }
+  let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+  const query = [];
+
+  if (category !== undefined) {
+    queryString += ` WHERE category = $1`;
+    query.push(category);
+  }
+  if (sort_by && category !== undefined) {
+    queryString += ` GROUP BY reviews.review_id ORDER BY $2`;
+    query.push(sort_by);
+  } else {
+    queryString += ` GROUP BY reviews.review_id ORDER BY $1`;
+    query.push(sort_by);
+  }
+  if (order === "DESC") {
+    queryString += ` DESC`;
   }
 
-  let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count 
-    FROM reviews LEFT JOIN comments 
-    ON comments.review_id = reviews.review_id
-    GROUP BY reviews.review_id`;
-
-  if (sort_by) {
-    queryString += ` ORDER BY ${sort_by} DESC`;
-  }
-
-  return db.query(queryString).then((response) => {
+  return db.query(queryString, query).then((response) => {
     const clonedResponse = JSON.parse(JSON.stringify(response.rows));
     const newArray = clonedResponse.map((object) => {
       object.comment_count = Number(object.comment_count);
@@ -66,7 +93,7 @@ exports.insertComment = (id, properties) => {
   console.log(username);
 
   if (username === undefined) {
-    return Promise.reject("Property not found!")
+    return Promise.reject("Property not found!");
   }
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [username])
