@@ -112,6 +112,14 @@ describe("app", () => {
             });
           });
       });
+      // test('400: when given an invalid category gives an error', () => {
+      //   return request(app)
+      //     .get("/api/reviews?category=invalid_sort")
+      //     .expect(400)
+      //     .then(({ body }) => {
+      //       expect(body.message).toBe("Invalid category");
+      //     });
+      // });
     });
   });
   describe("/api/review/:review_id", () => {

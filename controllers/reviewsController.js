@@ -2,14 +2,15 @@ const { selectReviews, fetchReviewById, selectCategoriesFromReviews } = require(
 
 exports.getReviews = (request, response, next) => {
   let { category, sort_by, order} = request.query;
-  const validateCategories = selectCategoriesFromReviews();
-  Promise.all([validateCategories]).then(([categories])=>{
-    categories.forEach((property) =>{
-      if (!Object.values(property)[0] === category) {
-        // return Promise.reject('Invalid category')
-      }
-    })
-  })
+  // const validateCategories = selectCategoriesFromReviews();
+  // Promise.all([validateCategories]).then(([categories])=>{
+  //   categories.forEach((property) =>{
+  //     if (!Object.values(property)[0] === category) {
+  //       console.log(category, property);
+  //       return Promise.reject('Invalid category')
+  //     }
+  //   })
+  // })
   if (sort_by === undefined) {sort_by = 'created_at'}
   if (order !== 'ASC') {order = 'DESC'}
 
