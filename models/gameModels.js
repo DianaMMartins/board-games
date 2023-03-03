@@ -1,5 +1,6 @@
 const { use } = require("../app.js");
 const db = require("../db/connection.js");
+const categories = require("../db/data/test-data/categories.js");
 const { reviewData } = require("../db/data/test-data/index.js");
 
 exports.selectCategories = () => {
@@ -8,23 +9,45 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviews = (sort_by) => {
-  const validSortOptions = ["created_at"];
+exports.selectCategoriesFromReviews = () => {
+  return db
+    .query(`SELECT category FROM reviews GROUP BY category`)
+    .then((response) => {
+      return response.rows;
+    });
+};
 
-  if (sort_by && !validSortOptions.includes(sort_by)) {
+exports.selectReviews = (category, sort_by, order) => {
+  const validSortOptions = [
+    "created_at",
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "votes",
+  ];
+  if (!validSortOptions.includes(sort_by)) {
     return Promise.reject("Invalid sorting!");
   }
 
-  let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count 
-    FROM reviews LEFT JOIN comments 
-    ON comments.review_id = reviews.review_id
-    GROUP BY reviews.review_id`;
+  console.log(category);
+  
+  let queryString = `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+  const query = [];
 
-  if (sort_by) {
-    queryString += ` ORDER BY ${sort_by} DESC`;
+  if (category !== undefined) {
+    queryString += ` WHERE reviews.category = $1`;
+    query.push(category);
   }
-
-  return db.query(queryString).then((response) => {
+  queryString += ` GROUP BY reviews.review_id ORDER BY ${sort_by}`;
+  if (order === "ASC") {
+    queryString += ` ASC;`;
+  } else {
+    queryString += " DESC;";
+  }
+  return db.query(queryString, query).then((response) => {
     const clonedResponse = JSON.parse(JSON.stringify(response.rows));
     const newArray = clonedResponse.map((object) => {
       object.comment_count = Number(object.comment_count);
@@ -63,10 +86,9 @@ exports.fetchCommentsFromReview = (id) => {
 
 exports.insertComment = (id, properties) => {
   const { username, body } = properties;
-  console.log(username);
 
   if (username === undefined) {
-    return Promise.reject("Property not found!")
+    return Promise.reject("Property not found!");
   }
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [username])

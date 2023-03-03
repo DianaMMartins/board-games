@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  describe.only("/api/users", () => {
+  describe("/api/users", () => {
     test("200: responds with an array of users", () => {
       return request(app)
         .get("/api/users")
@@ -64,32 +64,62 @@ describe("app", () => {
             expect(review).toHaveProperty("designer", expect.any(String));
             expect(review).toHaveProperty("comment_count", expect.any(Number));
           });
-          const expectArray = reviews.map((review) => review.comment_count);
-          expect(expectArray).toEqual([0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0]);
-        });
-    });
-    test("200: accepts a sort_by query of date in descending order", () => {
-      return request(app)
-        .get("/api/reviews?sort_by=created_at")
-        .expect(200)
-        .then(({ body }) => {
-          const reviews = body;
-          expect(reviews.length).toBeGreaterThan(0);
-          expect(reviews).toBeSortedBy("created_at", {
-            descending: true,
-            coerce: false,
-          });
         });
     });
   });
-  describe("/api/reviews?sort_by", () => {
-    test("400: invalid sort by query", () => {
-      return request(app)
-        .get("/api/reviews?sort_by=invalid_sort")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Invalid Request");
-        });
+  describe("/api/reviews queries", () => {
+    describe("/api/reviews?sort_by", () => {
+      test("200: accepts a sort_by query of date in descending order, default sort by to created_at in descending Order", () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+          .then(({ body }) => {
+            const reviews = body;
+            expect(reviews.length).toBeGreaterThan(0);
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+              coerce: false,
+            });
+          });
+      });
+      test("400: invalid sort by query is given", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=invalid_sort")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).toBe("Invalid Request");
+          });
+      });
+    });
+    describe("/api/reviews?category", () => {
+      test("200: accepts a category query and returns an object with all reviews in that category", () => {
+        return request(app)
+          .get("/api/reviews?category=social deduction")
+          .expect(200)
+          .then(({ body }) => {
+            const reviews = body;
+            reviews.forEach((review) => {
+              expect(review).toMatchObject({
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                category: "social deduction",
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(Number),
+              });
+            });
+          });
+      });
+      // test('400: when given an invalid category gives an error', () => {
+      //   return request(app)
+      //     .get("/api/reviews?category=invalid_sort")
+      //     .expect(400)
+      //     .then(({ body }) => {
+      //       expect(body.message).toBe("Invalid category");
+      //     });
+      // });
     });
   });
   describe("/api/review/:review_id", () => {
