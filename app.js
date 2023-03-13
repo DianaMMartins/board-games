@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require('cors')
 const {
   handleCustomErrors,
   handlePSQL400s,
@@ -15,8 +16,9 @@ const {
   patchReviewById,
 } = require("./controllers/reviewsController");
 const { getUsers } = require("./controllers/usersControllers");
-
 const { getCategories } = require("./controllers/categoriesController");
+
+app.use(cors());
 
 app.use(express.json());
 
