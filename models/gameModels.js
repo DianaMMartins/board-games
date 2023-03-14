@@ -31,8 +31,6 @@ exports.selectReviews = (category, sort_by, order) => {
   if (!validSortOptions.includes(sort_by)) {
     return Promise.reject("Invalid sorting!");
   }
-
-  console.log(category);
   
   let queryString = `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
   const query = [];
@@ -69,6 +67,16 @@ exports.fetchReviewById = (id) => {
       }
     });
 };
+
+exports.updateReviewById = (id, votes) => {
+  return db.query(`UPDATE reviews SET votes = votes + $1 WHERE reviews.review_id = $2 RETURNING *`, [votes, id]).then((result) => {
+   if (result.rowCount === 0) {
+    return Promise.reject("Can't find review");
+  } else {
+    return result.rows[0];
+  }
+  })
+}
 
 exports.fetchCommentsFromReview = (id) => {
   let queryString = "SELECT * FROM comments";

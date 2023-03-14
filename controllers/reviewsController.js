@@ -2,6 +2,7 @@ const {
   selectReviews,
   fetchReviewById,
   selectCategoriesFromReviews,
+  updateReviewById,
 } = require("../models/gameModels");
 
 exports.getReviews = (request, response, next) => {
@@ -47,17 +48,12 @@ exports.patchReviewById = (request, response, next) => {
   const { inc_votes } = request.body;
   const { review_id } = request.params;
 
-  fetchReviewById(review_id)
+  updateReviewById(review_id, inc_votes)
     .then((review) => {
-      if (inc_votes === undefined) {
-        return Promise.reject("Property not found!");
-      }
-
-      review.votes = review.votes + inc_votes;
-
-      if (Math.sign(inc_votes) === -1 && review.votes < 0) {
-        review.votes = 0;
-      }
+      // review.votes += inc_votes;
+      // if (Math.sign(inc_votes) === -1 && review.votes < 0) {
+      //   review.votes = 0;
+      // }
       response.status(200).send({ review });
     })
     .catch((error) => {

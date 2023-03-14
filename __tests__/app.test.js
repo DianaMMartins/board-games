@@ -317,8 +317,8 @@ describe("app", () => {
   });
   describe("PATCH: /api/reviews/:review_id", () => {
     test("200: PATCH RETURNS with an object of updated review", () => {
-      return request(app)
-        .patch("/api/reviews/2")
+      return request(app)  
+      .patch("/api/reviews/2")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
@@ -375,7 +375,7 @@ describe("app", () => {
             review_body: "Fiddly fun for all the family",
             category: "dexterity",
             created_at: "2021-01-18T10:01:41.251Z",
-            votes: 0,
+            votes: -195,
           });
         });
     });

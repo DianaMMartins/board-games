@@ -1,17 +1,19 @@
 exports.handlePSQL400s = (error, request, response, next) => {
   if (error.code === "22P02") {
     response.status(400).send({ message: "Bad request!" });
+  } else if (error.code === "23502") {
+    response.status(400).send({ message: "Invalid property!" });
   } else {
     next(error);
   }
 };
 
 exports.handleCustomErrors = (error, request, response, next) => {
-    if (error === "Invalid sorting!") {
+  if (error === "Invalid sorting!") {
     response.status(400).send({ message: "Invalid Request" });
   } else if (error === "Property not found!") {
     response.status(400).send({ message: "Invalid property!" });
-  } else if (error === "Can't find review") { 
+  } else if (error === "Can't find review") {
     response.status(404).send({ message: "Path not found!" });
   } else if (error === "Invalid data!") {
     response.status(404).send({ message: "Invalid data!" });
