@@ -99,7 +99,7 @@ exports.insertComment = (id, comment) => {
     return Promise.reject("Property not found!");
   }
   return db
-    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .query(`SELECT * FROM users`)
     .then((results) => {
       if (results.rowCount > 0) {
         return db

@@ -3,10 +3,13 @@ exports.handlePSQL400s = (error, request, response, next) => {
     response.status(400).send({ message: "Bad request!" });
   } else if (error.code === "23502") {
     response.status(400).send({ message: "Invalid property!" });
+  } else if (error.code === "23503") {
+    response.status(400).send({ message: "Invalid username!" });
   } else {
     next(error);
   }
 };
+
 
 exports.handleCustomErrors = (error, request, response, next) => {
   if (error === "Invalid sorting!") {

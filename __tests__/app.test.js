@@ -302,19 +302,21 @@ describe("app", () => {
           expect(body.message).toBe("Path not found!");
         });
     });
-    test("404: POST responds with error message if trying to POST to a review that exist but the username given is not valid", () => {
+
+    test("400: POST responds with error message if trying to POST to a review that exist but the username given is not valid", () => {
       return request(app)
         .post("/api/reviews/2/comments")
         .send({
           username: "cakesAreLies",
           body: "A fun afternoon! Definitely recommend!!!",
         })
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Invalid data!");
+          expect(body.message).toBe("Invalid username!");
         });
     });
   });
+
   describe("PATCH: /api/reviews/:review_id", () => {
     test("200: PATCH RETURNS with an object of updated review", () => {
       return request(app)  

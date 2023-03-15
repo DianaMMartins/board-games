@@ -27,7 +27,6 @@ exports.postComment = (request, response, next) => {
       return insertComment(review_id, receivedComment);
     })
     .then(([comment]) => {
-      console.log(comment);
       response.status(201).send({ comment });
     })
     .catch((error) => {
