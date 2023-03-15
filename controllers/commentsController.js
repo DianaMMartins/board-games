@@ -20,12 +20,14 @@ exports.getCommentsOfReview = (request, response, next) => {
 
 exports.postComment = (request, response, next) => {
   const { review_id } = request.params;
-  
+  const receivedComment  = request.body
+
   fetchReviewById(review_id)
     .then(() => {
-      return insertComment(review_id, request.body);
+      return insertComment(review_id, receivedComment);
     })
     .then(([comment]) => {
+      console.log(comment);
       response.status(201).send({ comment });
     })
     .catch((error) => {

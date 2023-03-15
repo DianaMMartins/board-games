@@ -92,8 +92,8 @@ exports.fetchCommentsFromReview = (id) => {
   });
 };
 
-exports.insertComment = (id, properties) => {
-  const { username, body } = properties;
+exports.insertComment = (id, comment) => {
+  const { username, body } = comment;
 
   if (username === undefined) {
     return Promise.reject("Property not found!");
