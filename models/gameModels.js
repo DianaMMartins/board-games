@@ -31,11 +31,12 @@ exports.selectReviews = (category, sort_by, order) => {
   if (!validSortOptions.includes(sort_by)) {
     return Promise.reject("Invalid sorting!");
   }
-  
-  let queryString = `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+
+  let queryString = `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count 
+  FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
   const query = [];
 
-  if (category !== undefined) {
+  if (category !== undefined) { 
     queryString += ` WHERE reviews.category = $1`;
     query.push(category);
   }
@@ -58,7 +59,8 @@ exports.selectReviews = (category, sort_by, order) => {
 
 exports.fetchReviewById = (id) => {
   return db
-    .query(`SELECT * FROM reviews WHERE review_id = $1`, [id])
+    .query(`SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count 
+    FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id`, [id])
     .then((result) => {
       if (result.rowCount === 0) {
         return Promise.reject("Can't find review");
@@ -69,14 +71,19 @@ exports.fetchReviewById = (id) => {
 };
 
 exports.updateReviewById = (id, votes) => {
-  return db.query(`UPDATE reviews SET votes = votes + $1 WHERE reviews.review_id = $2 RETURNING *`, [votes, id]).then((result) => {
-   if (result.rowCount === 0) {
-    return Promise.reject("Can't find review");
-  } else {
-    return result.rows[0];
-  }
-  })
-}
+  return db
+    .query(
+      `UPDATE reviews SET votes = votes + $1 WHERE reviews.review_id = $2 RETURNING *`,
+      [votes, id]
+    )
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject("Can't find review");
+      } else {
+        return result.rows[0];
+      }
+    });
+};
 
 exports.fetchCommentsFromReview = (id) => {
   let queryString = "SELECT * FROM comments";
@@ -98,20 +105,18 @@ exports.insertComment = (id, comment) => {
   if (username === undefined) {
     return Promise.reject("Property not found!");
   }
-  return db
-    .query(`SELECT * FROM users`)
-    .then((results) => {
-      if (results.rowCount > 0) {
-        return db
-          .query(
-            "INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *",
-            [body, username, id]
-          )
-          .then((result) => {
-            return result.rows;
-          });
-      } else {
-        return Promise.reject("Invalid data!");
-      }
-    });
+  return db.query(`SELECT * FROM users`).then((results) => {
+    if (results.rowCount > 0) {
+      return db
+        .query(
+          "INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *",
+          [body, username, id]
+        )
+        .then((result) => {
+          return result.rows;
+        });
+    } else {
+      return Promise.reject("Invalid data!");
+    }
+  });
 };

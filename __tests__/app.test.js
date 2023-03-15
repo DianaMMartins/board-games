@@ -140,11 +140,11 @@ describe("app", () => {
               review_img_url: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
+              comment_count: expect.any(Number),
             })
           );
         });
     });
-
     test("400: GET invalid review_id endpoint", () => {
       return request(app)
         .get("/api/reviews/cake")
@@ -316,7 +316,6 @@ describe("app", () => {
         });
     });
   });
-
   describe("PATCH: /api/reviews/:review_id", () => {
     test("200: PATCH RETURNS with an object of updated review", () => {
       return request(app)  
