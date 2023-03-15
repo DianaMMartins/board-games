@@ -21,7 +21,9 @@ exports.handleCustomErrors = (error, request, response, next) => {
   } else if (error === "Invalid data!") {
     response.status(404).send({ message: "Invalid data!" });
   } else if (error === "Invalid category") {
-    response.status(404).send({ message: "Invalid category" });
+    response.status(404).send({ message: "Category not found!" });
+  } else if (error === "Can't find comment") {
+    response.status(404).send({ message: "Comment not found!" });
   } else {
     next(error);
   }

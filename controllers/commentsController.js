@@ -1,3 +1,5 @@
+const { request, response } = require("../app");
+const { fetchCommentsById } = require("../models/commentModels");
 const {
   fetchCommentsFromReview,
   fetchReviewById,
@@ -20,7 +22,7 @@ exports.getCommentsOfReview = (request, response, next) => {
 
 exports.postComment = (request, response, next) => {
   const { review_id } = request.params;
-  const receivedComment  = request.body
+  const receivedComment = request.body;
 
   fetchReviewById(review_id)
     .then(() => {
@@ -33,3 +35,21 @@ exports.postComment = (request, response, next) => {
       next(error);
     });
 };
+
+exports.getCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  fetchCommentsById(comment_id).then((returnObj) => {
+      response.status(200).send(returnObj);
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+// exports.deleteCommentById = (request, response, next) => {
+//   const { comment_id } = request.params
+
+//   fetchCommentsById(comment_id).then(()=>{
+//     removeCommentById
+//   })
+// }

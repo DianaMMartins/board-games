@@ -162,6 +162,42 @@ describe("app", () => {
         });
     });
   });
+  describe("/api/comment/:comment_id", () => {
+    test("200: GET responds with a single comment object", () => {
+      return request(app)
+        .get("/api/comments/2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toMatchObject(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              review_id: expect.any(Number),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("400: GET invalid comment_id endpoint", () => {
+      return request(app)
+        .get("/api/comments/cake")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request!");
+        });
+    });
+    test("404: GET responds with error message if requested comment doesn't exist but is valid", () => {
+      return request(app)
+        .get("/api/comments/2000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Comment not found!");
+        });
+    });
+  });
+
   describe("/api/review/:review_id/comments", () => {
     test("200: GET responds with an array", () => {
       return request(app)
@@ -408,4 +444,21 @@ describe("app", () => {
         });
     });
   });
+  // describe("DELETE: /api/comments/:comment_id", () => {
+  //   test("200: deletes comment by comment_id", () => {
+  //     return request(app)
+  //       .delete("/api/comments/63")
+  //       .expect(200)
+  //       .then(({ body }) => {
+  //         expect(body).toMatchObject({
+  //           comment_id: 7,
+  //           body: "A fun afternoon! Definitely recommend!!!",
+  //           votes: 0,
+  //           author: "philippaclaire9",
+  //           review_id: 2,
+  //           created_at: expect.any(String),
+  //         });;
+  //       });
+  //   });
+  // });
 });
