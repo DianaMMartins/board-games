@@ -197,7 +197,6 @@ describe("app", () => {
         });
     });
   });
-
   describe("/api/review/:review_id/comments", () => {
     test("200: GET responds with an array", () => {
       return request(app)
@@ -354,8 +353,8 @@ describe("app", () => {
   });
   describe("PATCH: /api/reviews/:review_id", () => {
     test("200: PATCH RETURNS with an object of updated review", () => {
-      return request(app)  
-      .patch("/api/reviews/2")
+      return request(app)
+        .patch("/api/reviews/2")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
@@ -444,21 +443,14 @@ describe("app", () => {
         });
     });
   });
-  // describe("DELETE: /api/comments/:comment_id", () => {
-  //   test("200: deletes comment by comment_id", () => {
-  //     return request(app)
-  //       .delete("/api/comments/63")
-  //       .expect(200)
-  //       .then(({ body }) => {
-  //         expect(body).toMatchObject({
-  //           comment_id: 7,
-  //           body: "A fun afternoon! Definitely recommend!!!",
-  //           votes: 0,
-  //           author: "philippaclaire9",
-  //           review_id: 2,
-  //           created_at: expect.any(String),
-  //         });;
-  //       });
-  //   });
-  // });
+  describe("DELETE: /api/comments/:comment_id", () => {
+    test("204: deletes comment by comment_id", () => {
+      return request(app)
+        .delete("/api/comments/6")
+        .expect(204)
+        .then(( {body } ) => {
+          expect(body).toEqual({});
+        });
+    });
+  });
 });

@@ -40,7 +40,7 @@ app.get(`/api/reviews/:review_id/comments`, getCommentsOfReview);
 
 app.get(`/api/comments/:comment_id`, getCommentById)
 
-// app.delete(`/api/comments/:comment_id`, deleteCommentById)
+app.delete(`/api/comments/:comment_id`, deleteCommentById)
 
 app.use("*", (request, response, next) => {
   response.status(404).send({ message: "404: Path not found!" });
