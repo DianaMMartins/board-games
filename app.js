@@ -33,8 +33,6 @@ app.get(`/api/reviews`, getReviews);
 
 app.get(`/api/reviews/:parametric`, getReviewById);
 
-// app.get("/api/reviews/:category", getReviewByCategory);
-
 app.patch(`/api/reviews/:parametric`, patchReviewById);
 
 app.post(`/api/reviews/:parametric/comments`, postComment);
