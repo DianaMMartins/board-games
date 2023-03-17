@@ -1,8 +1,6 @@
-const { string } = require("pg-format");
 const {
   selectReviews,
   fetchReviewById,
-  selectCategoriesFromReviews,
   updateReviewById,
   fetchReviewByCategory,
   selectCategories,
