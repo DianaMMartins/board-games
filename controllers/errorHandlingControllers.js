@@ -16,6 +16,8 @@ exports.handleCustomErrors = (error, request, response, next) => {
     response.status(400).send({ message: "Invalid Request" });
   } else if (error === "Property not found!") {
     response.status(400).send({ message: "Invalid property!" });
+  } else if (error === "Can't find category") {
+    response.status(400).send({ message: "Category doesn't exist!" });
   } else if (error === "Can't find review") {
     response.status(404).send({ message: "Path not found!" });
   } else if (error === "Invalid data!") {

@@ -28,9 +28,9 @@ GET -> /api/categories
 
 for reviews:
 GET -> /api/reviews
-GET -> /api/reviews/:review:id
-PATCH -> /api/reviews/:review:id
+GET -> /api/reviews/:parametric
+PATCH -> /api/reviews/:parametric
 
 for comments
-POST -> /api/reviews/:review_id/comments
-GET -> /api/reviews/:review_id/comments
+POST -> /api/reviews/:parametric/comments
+GET -> /api/reviews/:parametric/comments

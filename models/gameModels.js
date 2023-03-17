@@ -36,7 +36,7 @@ exports.selectReviews = (category, sort_by, order) => {
   FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
   const query = [];
 
-  if (category !== undefined) { 
+  if (category !== undefined) {
     queryString += ` WHERE reviews.category = $1`;
     query.push(category);
   }
@@ -59,8 +59,11 @@ exports.selectReviews = (category, sort_by, order) => {
 
 exports.fetchReviewById = (id) => {
   return db
-    .query(`SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count 
-    FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id`, [id])
+    .query(
+      `SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count 
+    FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id`,
+      [id]
+    )
     .then((result) => {
       if (result.rowCount === 0) {
         return Promise.reject("Can't find review");
@@ -119,4 +122,21 @@ exports.insertComment = (id, comment) => {
       return Promise.reject("Invalid data!");
     }
   });
+};
+
+exports.fetchReviewByCategory = (category, availableCategories) => {
+  const checkCategory = availableCategories.map((obj) => obj.slug);
+  //check category exists
+  if (
+    checkCategory.filter(
+      (existingCategories) => existingCategories === category
+    ).length === 0
+  ) {
+    return Promise.reject("Can't find category");
+  }
+  return db
+    .query(`SELECT * FROM reviews WHERE reviews.category = $1`, [category])
+    .then((returns) => {
+      return returns.rows;
+    });
 };

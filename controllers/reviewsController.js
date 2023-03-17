@@ -1,8 +1,11 @@
+const { string } = require("pg-format");
 const {
   selectReviews,
   fetchReviewById,
   selectCategoriesFromReviews,
   updateReviewById,
+  fetchReviewByCategory,
+  selectCategories,
 } = require("../models/gameModels");
 
 exports.getReviews = (request, response, next) => {
@@ -33,24 +36,39 @@ exports.getReviews = (request, response, next) => {
 };
 
 exports.getReviewById = (request, response, next) => {
-  const { review_id } = request.params;
-
-  fetchReviewById(review_id)
-    .then((review) => {
-      response.status(200).send({ review });
-    })
-    .catch((error) => {
-      next(error);
-    });
+  const { parametric } = request.params;
+  const regEx = /\d/g;
+  if (regEx.test(parametric)) {
+    fetchReviewById(parametric)
+      .then((review) => {
+        response.status(200).send({ review });
+      })
+      .catch((error) => {
+        next(error);
+      });
+  } else {
+    selectCategories()
+      .then((categoriesRes) => {
+        return categoriesRes;
+      })
+      .then((categories) => {
+        fetchReviewByCategory(parametric, categories)
+          .then((reviews) => {
+            console.log(reviews);
+            response.status(200).send(reviews);
+          })
+          .catch((error) => {
+            next(error);
+          });
+      });
+  }
 };
-
-
 
 exports.patchReviewById = (request, response, next) => {
   const { inc_votes } = request.body;
-  const { review_id } = request.params;
+  const { parametric } = request.params;
 
-  updateReviewById(review_id, inc_votes)
+  updateReviewById(parametric, inc_votes)
     .then((review) => {
       // review.votes += inc_votes;
       // if (Math.sign(inc_votes) === -1 && review.votes < 0) {

@@ -10,9 +10,9 @@ const {
 } = require("../models/gameModels");
 
 exports.getCommentsOfReview = (request, response, next) => {
-  const { review_id } = request.params;
-  const review = fetchReviewById(review_id);
-  const comment = fetchCommentsFromReview(review_id);
+  const { parametric } = request.params;
+  const review = fetchReviewById(parametric);
+  const comment = fetchCommentsFromReview(parametric);
   Promise.all([review, comment])
     .then((result) => {
       const arrayOfComments = result[1];
@@ -24,12 +24,12 @@ exports.getCommentsOfReview = (request, response, next) => {
 };
 
 exports.postComment = (request, response, next) => {
-  const { review_id } = request.params;
+  const { parametric } = request.params;
   const receivedComment = request.body;
 
-  fetchReviewById(review_id)
+  fetchReviewById(parametric)
     .then(() => {
-      return insertComment(review_id, receivedComment);
+      return insertComment(parametric, receivedComment);
     })
     .then(([comment]) => {
       response.status(201).send({ comment });
@@ -58,7 +58,7 @@ exports.deleteCommentById = (request, response, next) => {
       return removeCommentById(comment_id);
     })
     .then((deletedComment) => {
-      response.status(204).send({})
+      response.status(204).send(null);
     })
     .catch((error) => {
       next(error);

@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const cors = require('cors')
+const cors = require("cors");
 const {
   handleCustomErrors,
   handlePSQL400s,
@@ -16,6 +16,7 @@ const {
   getReviews,
   getReviewById,
   patchReviewById,
+  getReviewByCategory,
 } = require("./controllers/reviewsController");
 const { getUsers } = require("./controllers/usersControllers");
 const { getCategories } = require("./controllers/categoriesController");
@@ -30,17 +31,19 @@ app.get("/api/categories", getCategories);
 
 app.get(`/api/reviews`, getReviews);
 
-app.get(`/api/reviews/:review_id`, getReviewById);
+app.get(`/api/reviews/:parametric`, getReviewById);
 
-app.patch(`/api/reviews/:review_id`, patchReviewById);
+// app.get("/api/reviews/:category", getReviewByCategory);
 
-app.post(`/api/reviews/:review_id/comments`, postComment);
+app.patch(`/api/reviews/:parametric`, patchReviewById);
 
-app.get(`/api/reviews/:review_id/comments`, getCommentsOfReview);
+app.post(`/api/reviews/:parametric/comments`, postComment);
 
-app.get(`/api/comments/:comment_id`, getCommentById)
+app.get(`/api/reviews/:parametric/comments`, getCommentsOfReview);
 
-app.delete(`/api/comments/:comment_id`, deleteCommentById)
+app.get(`/api/comments/:comment_id`, getCommentById);
+
+app.delete(`/api/comments/:comment_id`, deleteCommentById);
 
 app.use("*", (request, response, next) => {
   response.status(404).send({ message: "404: Path not found!" });

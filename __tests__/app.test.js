@@ -122,8 +122,8 @@ describe("app", () => {
       // });
     });
   });
-  describe("/api/review/:review_id", () => {
-    test("200: GET responds with a single review object", () => {
+  describe("/api/review/:parametric", () => {
+    test("200: GET responds with a single review object when given a number as id and it exists", () => {
       return request(app)
         .get("/api/reviews/2")
         .expect(200)
@@ -145,14 +145,6 @@ describe("app", () => {
           );
         });
     });
-    test("400: GET invalid review_id endpoint", () => {
-      return request(app)
-        .get("/api/reviews/cake")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Bad request!");
-        });
-    });
     test("404: GET responds with error message if requested review doesn't exist but is valid", () => {
       return request(app)
         .get("/api/reviews/2000")
@@ -161,7 +153,39 @@ describe("app", () => {
           expect(body.message).toBe("Path not found!");
         });
     });
+
+    test("200: GET responds with an array of reviews with category given ", () => {
+      return request(app)
+        .get("/api/reviews/dexterity")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual([
+            {
+              review_id: 2,
+              title: "Jenga",
+              category: "dexterity",
+              designer: "Leslie Scott",
+              owner: "philippaclaire9",
+              review_body: "Fiddly fun for all the family",
+              review_img_url:
+                "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+              created_at: expect.any(String),
+              votes: 5,
+            },
+          ]);
+        });
+    });
+
+    test("400: GET invalid review_id endpoint when parametric is a string but doesn't exist in categories", () => {
+      return request(app)
+        .get("/api/reviews/cake")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Category doesn't exist!");
+        });
+    });
   });
+
   describe("/api/comment/:comment_id", () => {
     test("200: GET responds with a single comment object", () => {
       return request(app)
@@ -264,7 +288,7 @@ describe("app", () => {
         });
     });
   });
-  describe("POST /api/reviews/:review_id/comments", () => {
+  describe("POST /api/reviews/:parametric/comments", () => {
     test("201: responds with newly created comment", () => {
       return request(app)
         .post("/api/reviews/2/comments")
@@ -351,7 +375,7 @@ describe("app", () => {
         });
     });
   });
-  describe("PATCH: /api/reviews/:review_id", () => {
+  describe("PATCH: /api/reviews/:parametric", () => {
     test("200: PATCH RETURNS with an object of updated review", () => {
       return request(app)
         .patch("/api/reviews/2")
@@ -445,12 +469,17 @@ describe("app", () => {
   });
   describe("DELETE: /api/comments/:comment_id", () => {
     test("204: deletes comment by comment_id", () => {
-      return request(app)
-        .delete("/api/comments/6")
-        .expect(204)
-        .then(( {body } ) => {
-          expect(body).toEqual({});
-        });
+      return request(app).delete("/api/comments/6").expect(204);
+      // .then(({ body }) => {
+      //   request(app)
+      //     .get("/api/comments/6")
+      //     .expect(200)
+      //     .then((response) => {
+      //       const commentToDelete = response.body;
+      //       console.log(commentToDelete);
+      //     })
+      //   expect(body).toEqual({});
+      // });
     });
   });
 });
