@@ -12,10 +12,12 @@ exports.handlePSQL400s = (error, request, response, next) => {
 
 
 exports.handleCustomErrors = (error, request, response, next) => {
-  if (error === "Invalid sorting!") {
-    response.status(400).send({ message: "Invalid Request" });
+  if (error === "Invalid sort by request!") {
+    response.status(400).send({ message: "Invalid sort request!" });
   } else if (error === "Property not found!") {
     response.status(400).send({ message: "Invalid property!" });
+  } else if (error === "Invalid type in category") {
+    response.status(400).send({ message: "Sort by category should be string!" });
   } else if (error === "Can't find category") {
     response.status(400).send({ message: "Category doesn't exist!" });
   } else if (error === "Can't find review") {

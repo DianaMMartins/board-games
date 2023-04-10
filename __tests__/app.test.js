@@ -15,33 +15,49 @@ afterAll(() => {
 
 describe("app", () => {
   describe("/api/users", () => {
-    test("200: responds with an array of users", () => {
+    test("200: responds with an array of users with properties of: username, name and avatar_url", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
           const users = body;
-          expect(users.length).toBeGreaterThan(0);
           users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));
             expect(user).toHaveProperty("name", expect.any(String));
-            expect(user).toHaveProperty("avatar_url", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.stringContaining('https://'));
           });
         });
     });
+    test("200: responds with an array of length bigger than 0", ()=>{
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const users = body.length;
+          expect(users).toBeGreaterThan(0);
+        })
+    })
   });
   describe("/api/categories", () => {
-    test("200: responds with an array of categories", () => {
+    test("200: responds with an array of categories with a key of 'slug' and 'description'", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
           const categories = body;
-          expect(categories.length).toBeGreaterThan(0);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
             expect(category).toHaveProperty("description", expect.any(String));
           });
+        });
+    });
+    test("200: responds with an array of length bigger than 0", () => {
+      return request(app)
+        .get("/api/categories")
+        .expect(200)
+        .then(({ body }) => {
+          const categories = body.length;
+          expect(categories).toBeGreaterThan(0);
         });
     });
   });
@@ -50,32 +66,42 @@ describe("app", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
-        .then((body) => {
-          const reviews = body.body;
+        .then(({body}) => {
+          const reviews = body;
           expect(reviews.length).toBeGreaterThan(0);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner", expect.any(String));
             expect(review).toHaveProperty("title", expect.any(String));
             expect(review).toHaveProperty("review_id", expect.any(Number));
             expect(review).toHaveProperty("category", expect.any(String));
-            expect(review).toHaveProperty("review_img_url", expect.any(String));
-            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("review_img_url", expect.stringContaining('https://'));
             expect(review).toHaveProperty("votes", expect.any(Number));
             expect(review).toHaveProperty("designer", expect.any(String));
             expect(review).toHaveProperty("comment_count", expect.any(Number));
+            expect(review).not.toHaveProperty("review_body");
+            expect(review).toHaveProperty("created_at");
+            expect(review.created_at.length).toBe(24)
           });
         });
     });
+    test("200: responds with an array of length bigger than 0", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const reviews = body.length;
+          expect(reviews).toBeGreaterThan(0);
+        });
+    })
   });
-  describe("/api/reviews queries", () => {
+  describe("/api/reviews?queries", () => {
     describe("/api/reviews?sort_by", () => {
-      test("200: accepts a sort_by query of date in descending order, default sort by to created_at in descending Order", () => {
+      test("200: accepts a sort_by query of date, defaults to: sort_by 'created_at' in desc order", () => {
         return request(app)
           .get("/api/reviews")
           .expect(200)
           .then(({ body }) => {
             const reviews = body;
-            expect(reviews.length).toBeGreaterThan(0);
             expect(reviews).toBeSortedBy("created_at", {
               descending: true,
               coerce: false,
@@ -87,7 +113,7 @@ describe("app", () => {
           .get("/api/reviews?sort_by=invalid_sort")
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).toBe("Invalid Request");
+            expect(body.message).toBe("Invalid sort request!");
           });
       });
     });
@@ -111,16 +137,45 @@ describe("app", () => {
               });
             });
           });
+        });
+      test("200: if no category query is specified, return all reviews", () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+          .then(({ body }) => {
+            const reviews = body;
+            reviews.forEach((review) => {
+              expect(review).toMatchObject({
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                category: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(Number),
+              });
+            });
+          });
       });
-      // test('400: when given an invalid category gives an error', () => {
-      //   return request(app)
-      //     .get("/api/reviews?category=invalid_sort")
-      //     .expect(400)
-      //     .then(({ body }) => {
-      //       expect(body.message).toBe("Invalid category");
-      //     });
-      // });
-    });
+      test('404: when given an invalid category, gives an error', () => {
+        return request(app)
+          .get("/api/reviews?category=invalid_sort")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.message).toBe("Category not found!");
+          });
+      });
+      test('400: when given an invalid type of category, gives an error', () => {
+        return request(app)
+          .get("/api/reviews?category=250")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).toBe("Sort by category should be string!");
+          });
+      });
+     
+    })
   });
   describe("/api/review/:parametric", () => {
     test("200: GET responds with a single review object when given a number as id and it exists", () => {
