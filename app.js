@@ -16,7 +16,6 @@ const {
   getReviews,
   getReviewById,
   patchReviewById,
-  getReviewByCategory,
 } = require("./controllers/reviewsController");
 const { getUsers } = require("./controllers/usersControllers");
 const { getCategories } = require("./controllers/categoriesController");

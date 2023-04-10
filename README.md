@@ -18,19 +18,37 @@ Don't forget to initialize and seed your database.
 
 ---
 
-Paths to back end
+## Paths available:
 
-for Users:
-GET -> /api/users
+### Users:
+- GET -> `/api/users`
 
-for Categories:
-GET -> /api/categories
+### Categories:
+- GET -> `/api/categories`
 
-for reviews:
-GET -> /api/reviews
-GET -> /api/reviews/:parametric
-PATCH -> /api/reviews/:parametric
+### Reviews:
+- GET -> `/api/reviews`
+- GET -> `/api/reviews/:parametric`
+- PATCH -> `/api/reviews/:parametric`
 
-for comments
-POST -> /api/reviews/:parametric/comments
-GET -> /api/reviews/:parametric/comments
+    Available Reviews queries:
+    - Queries:
+        - `sort_by`:
+            - "created_at" (default),
+            - "title",
+            - "designer",
+            - "owner",
+            - "review_img_url",
+            - "review_body",
+            - "category",
+            - "votes"
+            
+        - `order` 
+            - "asc", 
+            - "desc" (default)
+
+        - `category` that is exists in the database, defaults to give all reviews
+
+### Comments
+- POST -> `/api/reviews/:parametric/comments`
+- GET -> `/api/reviews/:parametric/comments`
