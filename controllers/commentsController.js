@@ -1,13 +1,12 @@
-const { request, response } = require("../app");
 const {
   fetchCommentsById,
   removeCommentById,
+  fetchCommentsFromReview,
+  insertComment
 } = require("../models/commentModels");
 const {
-  fetchCommentsFromReview,
   fetchReviewById,
-  insertComment,
-} = require("../models/gameModels");
+  } = require("../models/reviewsModels");
 
 exports.getCommentsOfReview = (request, response, next) => {
   const { parametric } = request.params;

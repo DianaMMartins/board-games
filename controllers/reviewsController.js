@@ -3,8 +3,8 @@ const {
   fetchReviewById,
   updateReviewById,
   fetchReviewByCategory,
-  selectCategories,
-} = require("../models/gameModels");
+} = require("../models/reviewsModels");
+const {selectCategories } =require('../models/categoriesModels')
 
 exports.getReviews = (request, response, next) => {
   let { category, sort_by, order } = request.query;
@@ -52,7 +52,6 @@ exports.getReviewById = (request, response, next) => {
       .then((categories) => {
         fetchReviewByCategory(parametric, categories)
           .then((reviews) => {
-            console.log(reviews);
             response.status(200).send(reviews);
           })
           .catch((error) => {

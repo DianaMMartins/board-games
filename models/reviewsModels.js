@@ -1,21 +1,4 @@
-const { use } = require("../app.js");
 const db = require("../db/connection.js");
-const categories = require("../db/data/test-data/categories.js");
-const { reviewData } = require("../db/data/test-data/index.js");
-
-exports.selectCategories = () => {
-  return db.query(`SELECT * FROM categories;`).then((response) => {
-    return response.rows;
-  });
-};
-
-exports.selectCategoriesFromReviews = () => {
-  return db
-    .query(`SELECT category FROM reviews GROUP BY category`)
-    .then((response) => {
-      return response.rows;
-    });
-};
 
 exports.selectReviews = (category, sort_by, order) => {
   const validSortOptions = [
@@ -86,42 +69,6 @@ exports.updateReviewById = (id, votes) => {
         return result.rows[0];
       }
     });
-};
-
-exports.fetchCommentsFromReview = (id) => {
-  let queryString = "SELECT * FROM comments";
-  const query = [];
-
-  if (id !== undefined) {
-    queryString += ` WHERE review_id = $1 ORDER BY created_at DESC`;
-    query.push(id);
-  }
-
-  return db.query(queryString, query).then((results) => {
-    return results.rows;
-  });
-};
-
-exports.insertComment = (id, comment) => {
-  const { username, body } = comment;
-
-  if (username === undefined) {
-    return Promise.reject("Property not found!");
-  }
-  return db.query(`SELECT * FROM users`).then((results) => {
-    if (results.rowCount > 0) {
-      return db
-        .query(
-          "INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *",
-          [body, username, id]
-        )
-        .then((result) => {
-          return result.rows;
-        });
-    } else {
-      return Promise.reject("Invalid data!");
-    }
-  });
 };
 
 exports.fetchReviewByCategory = (category, availableCategories) => {
