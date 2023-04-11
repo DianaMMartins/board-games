@@ -6,7 +6,7 @@ const {
 } = require("../models/reviewsModels");
 const {
   selectCategories,
-  selectCategoriesFromReviews
+  selectCategoriesFromReviews,
 } = require("../models/categoriesModels");
 
 exports.getReviews = (request, response, next) => {
@@ -62,10 +62,6 @@ exports.patchReviewById = (request, response, next) => {
 
   updateReviewById(parametric, inc_votes)
     .then((review) => {
-      // review.votes += inc_votes;
-      // if (Math.sign(inc_votes) === -1 && review.votes < 0) {
-      //   review.votes = 0;
-      // }
       response.status(200).send({ review });
     })
     .catch((error) => {

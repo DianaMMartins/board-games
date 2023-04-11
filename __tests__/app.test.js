@@ -163,7 +163,7 @@ describe("app", () => {
           .get("/api/reviews?category=invalid_sort")
           .expect(404)
           .then(({ body }) => {
-            expect(body.message).toBe("Category not found!");
+            expect(body.message).toBe("Invalid category data!");
           });
       });
       test('400: when given an invalid type of category, gives an error', () => {
@@ -200,15 +200,14 @@ describe("app", () => {
           );
         });
     });
-    test("404: GET responds with error message if requested review doesn't exist but is valid", () => {
+    test("404: responds with error message if requested review doesn't exist but is valid", () => {
       return request(app)
         .get("/api/reviews/2000")
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found!");
+          expect(body.message).toBe("Review does not exist!");
         });
     });
-
     test("200: GET responds with an array of reviews with category given ", () => {
       return request(app)
         .get("/api/reviews/dexterity")
@@ -240,7 +239,6 @@ describe("app", () => {
         });
     });
   });
-
   describe("/api/comment/:comment_id", () => {
     test("200: GET responds with a single comment object", () => {
       return request(app)
@@ -329,7 +327,7 @@ describe("app", () => {
         .get("/api/reviews/2000/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found!");
+          expect(body.message).toBe("Review does not exist!");
         });
     });
   });
@@ -413,7 +411,7 @@ describe("app", () => {
         })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found!");
+          expect(body.message).toBe("Review does not exist!");
         });
     });
 
@@ -494,31 +492,40 @@ describe("app", () => {
           });
         });
     });
-    test("404: error message if trying to PATCH to a review that doesn't exist", () => {
+    test("404: if trying to PATCH to a review that doesn't exist, but is valid", () => {
       return request(app)
         .patch("/api/reviews/200")
         .send({ inc_votes: -2 })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found!");
+          expect(body.message).toBe("Review does not exist!");
         });
     });
-    test("400: error message if trying to PATCH to a review that exists but the property to patch is not valid", () => {
+    test("404: if trying to PATCH to a review type that is not valid", () => {
+      return request(app)
+        .patch("/api/reviews/cake")
+        .send({ inc_votes: -2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid review type!");
+        });
+    });
+    test("400: error message if trying to PATCH to a review that exists but the property given is not valid", () => {
       return request(app)
         .patch("/api/reviews/2")
         .send({})
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Invalid property!");
+          expect(body.message).toBe("Insert valid data!");
         });
     });
-    test("400: error message if trying to PATCH to a review that exists but the property to patch is not valid", () => {
+    test("400: error message if trying to PATCH to a review that exists and property to patch doesn't exist", () => {
       return request(app)
         .patch("/api/reviews/2")
         .send({ key: 5 })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Invalid property!");
+          expect(body.message).toBe("Insert valid data!");
         });
     });
   });

@@ -79,14 +79,29 @@ exports.fetchReviewById = (id) => {
 };
 
 exports.updateReviewById = (id, votes) => {
+  const regex = /\d/;
+
+  if (!regex.test(id)) {
+    return Promise.reject("Review not valid");
+  }
+  if(votes === undefined) {
+    return Promise.reject("Vote property is invalid");
+  }
+  
+  let queryString = `UPDATE reviews SET votes = votes + $1 WHERE reviews.review_id = $2 RETURNING *`;
+  const query = [votes, id]
   return db
     .query(
-      `UPDATE reviews SET votes = votes + $1 WHERE reviews.review_id = $2 RETURNING *`,
-      [votes, id]
+      queryString,
+      query
     )
     .then((result) => {
-      if (result.rowCount === 0) {
+      if (result.rowCount === 0 && regex.test(id)) {
         return Promise.reject("Can't find review");
+      } else if (result.rowCount === 0 && !regex.test(id)) {
+        return Promise.reject("Review not valid");
+      // } else if (result.rowCount === 0) {
+      //   return Promise.reject("Can't find review property");
       } else {
         return result.rows[0];
       }
