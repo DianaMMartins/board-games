@@ -57,6 +57,7 @@ exports.deleteCommentById = (request, response, next) => {
       return removeCommentById(comment_id);
     })
     .then((deletedComment) => {
+      // console.log(deletedComment);
       response.status(204).send(null);
     })
     .catch((error) => {

@@ -4,19 +4,14 @@ const {
   updateReviewById,
   fetchReviewByCategory,
 } = require("../models/reviewsModels");
-const {selectCategories } =require('../models/categoriesModels')
+const {
+  selectCategories,
+  selectCategoriesFromReviews,
+} = require("../models/categoriesModels");
 
 exports.getReviews = (request, response, next) => {
   let { category, sort_by, order } = request.query;
-  // const validateCategories = selectCategoriesFromReviews();
-  // Promise.all([validateCategories]).then(([categories])=>{
-  //   categories.forEach((property) =>{
-  //     if (!Object.values(property)[0] === category) {
-  //       console.log(category, property);
-  //       return Promise.reject('Invalid category')
-  //     }
-  //   })
-  // })
+
   if (sort_by === undefined) {
     sort_by = "created_at";
   }
@@ -67,10 +62,6 @@ exports.patchReviewById = (request, response, next) => {
 
   updateReviewById(parametric, inc_votes)
     .then((review) => {
-      // review.votes += inc_votes;
-      // if (Math.sign(inc_votes) === -1 && review.votes < 0) {
-      //   review.votes = 0;
-      // }
       response.status(200).send({ review });
     })
     .catch((error) => {

@@ -10,6 +10,10 @@ exports.selectCategoriesFromReviews = () => {
   return db
     .query(`SELECT category FROM reviews GROUP BY category`)
     .then((response) => {
-      return response.rows;
+      const categories = [];
+      response.rows.forEach((object) => {
+        categories.push(object.category)
+      })
+      return categories;
     });
 };
