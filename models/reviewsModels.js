@@ -100,8 +100,6 @@ exports.updateReviewById = (id, votes) => {
         return Promise.reject("Can't find review");
       } else if (result.rowCount === 0 && !regex.test(id)) {
         return Promise.reject("Review not valid");
-      // } else if (result.rowCount === 0) {
-      //   return Promise.reject("Can't find review property");
       } else {
         return result.rows[0];
       }

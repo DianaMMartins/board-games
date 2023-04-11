@@ -24,19 +24,22 @@ describe("app", () => {
           users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));
             expect(user).toHaveProperty("name", expect.any(String));
-            expect(user).toHaveProperty("avatar_url", expect.stringContaining('https://'));
+            expect(user).toHaveProperty(
+              "avatar_url",
+              expect.stringContaining("https://")
+            );
           });
         });
     });
-    test("200: responds with an array of length bigger than 0", ()=>{
+    test("200: responds with an array of length bigger than 0", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
           const users = body.length;
           expect(users).toBeGreaterThan(0);
-        })
-    })
+        });
+    });
   });
   describe("/api/categories", () => {
     test("200: responds with an array of categories with a key of 'slug' and 'description'", () => {
@@ -66,7 +69,7 @@ describe("app", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
-        .then(({body}) => {
+        .then(({ body }) => {
           const reviews = body;
           expect(reviews.length).toBeGreaterThan(0);
           reviews.forEach((review) => {
@@ -74,13 +77,16 @@ describe("app", () => {
             expect(review).toHaveProperty("title", expect.any(String));
             expect(review).toHaveProperty("review_id", expect.any(Number));
             expect(review).toHaveProperty("category", expect.any(String));
-            expect(review).toHaveProperty("review_img_url", expect.stringContaining('https://'));
+            expect(review).toHaveProperty(
+              "review_img_url",
+              expect.stringContaining("https://")
+            );
             expect(review).toHaveProperty("votes", expect.any(Number));
             expect(review).toHaveProperty("designer", expect.any(String));
             expect(review).toHaveProperty("comment_count", expect.any(Number));
             expect(review).not.toHaveProperty("review_body");
             expect(review).toHaveProperty("created_at");
-            expect(review.created_at.length).toBe(24)
+            expect(review.created_at.length).toBe(24);
           });
         });
     });
@@ -92,7 +98,7 @@ describe("app", () => {
           const reviews = body.length;
           expect(reviews).toBeGreaterThan(0);
         });
-    })
+    });
   });
   describe("/api/reviews?queries", () => {
     describe("/api/reviews?sort_by", () => {
@@ -137,7 +143,7 @@ describe("app", () => {
               });
             });
           });
-        });
+      });
       test("200: if no category query is specified, return all reviews", () => {
         return request(app)
           .get("/api/reviews")
@@ -158,7 +164,7 @@ describe("app", () => {
             });
           });
       });
-      test('404: when given an invalid category, gives an error', () => {
+      test("404: when given an invalid category, gives an error", () => {
         return request(app)
           .get("/api/reviews?category=invalid_sort")
           .expect(404)
@@ -166,7 +172,7 @@ describe("app", () => {
             expect(body.message).toBe("Invalid category data!");
           });
       });
-      test('400: when given an invalid type of category, gives an error', () => {
+      test("400: when given an invalid type of category, gives an error", () => {
         return request(app)
           .get("/api/reviews?category=250")
           .expect(400)
@@ -174,8 +180,7 @@ describe("app", () => {
             expect(body.message).toBe("Sort by category should be string!");
           });
       });
-     
-    })
+    });
   });
   describe("/api/review/:parametric", () => {
     test("200: GET responds with a single review object when given a number as id and it exists", () => {
@@ -532,16 +537,6 @@ describe("app", () => {
   describe("DELETE: /api/comments/:comment_id", () => {
     test("204: deletes comment by comment_id", () => {
       return request(app).delete("/api/comments/6").expect(204);
-      // .then(({ body }) => {
-      //   request(app)
-      //     .get("/api/comments/6")
-      //     .expect(200)
-      //     .then((response) => {
-      //       const commentToDelete = response.body;
-      //       console.log(commentToDelete);
-      //     })
-      //   expect(body).toEqual({});
-      // });
     });
   });
 });
