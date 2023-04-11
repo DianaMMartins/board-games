@@ -14,6 +14,9 @@ afterAll(() => {
 });
 
 describe("app", () => {
+  describe("/api", () => {
+    
+  })
   describe("/api/users", () => {
     test("200: responds with an array of users with properties of: username, name and avatar_url", () => {
       return request(app)
