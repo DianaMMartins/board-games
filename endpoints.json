@@ -2,6 +2,19 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]
+    }
+  },
   "GET /api/categories": {
     "description": "serves an array of all categories",
     "queries": [],
@@ -30,5 +43,108 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:parametric_endpoint": {
+    "description": "serves an object of requested review",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": {
+        "review": {
+          "review_id": 2,
+          "title": "JengARRGGGH!",
+          "category": "dexterity",
+          "designer": "Leslie Scott",
+          "owner": "grumpy19",
+          "review_body": "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+          "review_img_url": "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+          "created_at": "2021-01-18T10:01:41.251Z",
+          "votes": 6,
+          "comment_count": 3
+        }
+      }
+    }
+  },
+  "PATCH /api/reviews/:parametric_endpoint": {
+    "description": "serves an object of updated review object with an added property of votes",
+    "receives": { "inc_votes": 0 },
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 2,
+        "title": "JengARRGGGH!",
+        "category": "dexterity",
+        "designer": "Leslie Scott",
+        "owner": "grumpy19",
+        "review_body": "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        "review_img_url": "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+        "created_at": "2021-01-18T10:01:41.251Z",
+        "votes": 6
+      }
+    }
+  },
+  "POST /api/reviews/:parametric_endpoint/comments": {
+    "description": "serves an array of comments from requested review",
+    "receives": {
+      "username": "username that exists",
+      "body": "comment body to post"
+    },
+    "queries": [],
+    "exampleResponse": {
+      "comment_id": 7,
+      "body": "A fun afternoon! Definitely recommend!!!",
+      "review_id": 2,
+      "author": "philippaclaire9",
+      "votes": 0,
+      "created_at": "2023-04-11T13:07:36.497Z"
+    }
+  },
+  "GET /api/reviews/:parametric_endpoint/comments": {
+    "description": "serves an array of comments from requested review",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 10,
+          "body": "Ex id ipsum dolore non cillum anim sint duis nisi anim deserunt nisi minim.",
+          "review_id": 2,
+          "author": "grumpy19",
+          "votes": 9,
+          "created_at": "2021-03-27T14:15:31.110Z"
+        },
+        {
+          "comment_id": 1,
+          "body": "I loved this game too!",
+          "review_id": 2,
+          "author": "happyamy2016",
+          "votes": 16,
+          "created_at": "2017-11-22T12:36:03.389Z"
+        },
+        {
+          "comment_id": 4,
+          "body": "EPIC board game!",
+          "review_id": 2,
+          "author": "tickle122",
+          "votes": 16,
+          "created_at": "2017-11-22T12:36:03.389Z"
+        }
+      ]
+    }
+  },
+  "GET /api/comments/:parametric_endpoint": {
+    "description": "serves an object of requested comment by id",
+    "queries": [],
+    "exampleResponse": {
+      "comment_id": 2,
+      "body": "My dog loved this game too!",
+      "review_id": 4,
+      "author": "tickle122",
+      "votes": 3,
+      "created_at": "2021-01-18T10:09:05.410Z"
+    }
+  },
+  "DELETE /api/comments/:parametric_endpoint": {
+    "description": "deletes a comment by id",
+    "queries": [],
+    "exampleResponse": "204 No Content"
   }
 }

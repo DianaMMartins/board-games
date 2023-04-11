@@ -19,10 +19,15 @@ const {
 } = require("./controllers/reviewsController");
 const { getUsers } = require("./controllers/usersControllers");
 const { getCategories } = require("./controllers/categoriesController");
+const foo = require("./endpoints.json");
 
 app.use(cors());
 
 app.use(express.json());
+
+app.get("/api", (request, response, next) => {
+  response.send(foo);
+});
 
 app.get("/api/users", getUsers);
 

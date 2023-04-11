@@ -31,6 +31,7 @@ exports.postComment = (request, response, next) => {
       return insertComment(parametric, receivedComment);
     })
     .then(([comment]) => {
+      console.log(comment);
       response.status(201).send({ comment });
     })
     .catch((error) => {
