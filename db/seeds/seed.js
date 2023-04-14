@@ -22,7 +22,8 @@ const seed = ({ categoryData, commentData, reviewData, userData }) => {
       const topicsTablePromise = db.query(`
 			CREATE TABLE categories (
 				slug VARCHAR PRIMARY KEY,
-				description VARCHAR
+				description VARCHAR,
+        img VARCHAR
 			);`);
       const usersTablePromise = db.query(`
 			CREATE TABLE users (
@@ -60,8 +61,8 @@ const seed = ({ categoryData, commentData, reviewData, userData }) => {
     })
     .then(() => {
       const insertCategoriesQueryStr = format(
-        'INSERT INTO categories (slug, description) VALUES %L;',
-        categoryData.map(({ slug, description }) => [slug, description])
+        'INSERT INTO categories (slug, description, img) VALUES %L;',
+        categoryData.map(({ slug, description, img }) => [slug, description, img])
       );
       const categoriesPromise = db.query(insertCategoriesQueryStr);
 

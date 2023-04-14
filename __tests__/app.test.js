@@ -45,7 +45,7 @@ describe("app", () => {
     });
   });
   describe("/api/categories", () => {
-    test("200: responds with an array of categories with a key of 'slug' and 'description'", () => {
+    test("200: responds with an array of categories with a key of 'slug', 'description' and 'img'", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
@@ -54,6 +54,7 @@ describe("app", () => {
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
             expect(category).toHaveProperty("description", expect.any(String));
+            expect(category).toHaveProperty("img", expect.stringContaining('https://'));
           });
         });
     });
