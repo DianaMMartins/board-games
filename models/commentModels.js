@@ -11,6 +11,28 @@ exports.fetchCommentsById = (comment_id) => {
     });
 };
 
+exports.updateCommentsLike = (id, value) => {
+  const regex = /\d/;
+console.log(value, id);
+  if (!regex.test(id)) {
+    return Promise.reject("Comment not valid");
+  }
+  if(value === undefined) {
+    console.log('invalid');
+    return Promise.reject("Vote property is invalid");
+  }
+
+  return db.query(`UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *`, [value, id]).then((results) => {
+    if (results.rowCount === 0 && regex.test(id)) {
+      return Promise.reject("Can't find comment");
+    } else if (results.rowCount === 0 && !regex.test(id)) {
+      return Promise.reject("Comment not valid");
+    } else {
+      return results.rows[0];
+    }
+  })
+}
+
 exports.removeCommentById = (comment_id) => {
   return db
     .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [comment_id])

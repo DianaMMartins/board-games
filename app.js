@@ -11,6 +11,7 @@ const {
   postComment,
   deleteCommentById,
   getCommentById,
+  patchCommentById,
 } = require("./controllers/commentsController");
 const {
   getReviews,
@@ -44,6 +45,8 @@ app.post(`/api/reviews/:parametric/comments`, postComment);
 app.get(`/api/reviews/:parametric/comments`, getCommentsOfReview);
 
 app.get(`/api/comments/:comment_id`, getCommentById);
+
+app.patch(`/api/comments/:comment_id`, patchCommentById);
 
 app.delete(`/api/comments/:comment_id`, deleteCommentById);
 

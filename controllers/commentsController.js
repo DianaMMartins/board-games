@@ -2,11 +2,10 @@ const {
   fetchCommentsById,
   removeCommentById,
   fetchCommentsFromReview,
-  insertComment
+  insertComment,
+  updateCommentsLike,
 } = require("../models/commentModels");
-const {
-  fetchReviewById,
-  } = require("../models/reviewsModels");
+const { fetchReviewById } = require("../models/reviewsModels");
 
 exports.getCommentsOfReview = (request, response, next) => {
   const { parametric } = request.params;
@@ -31,7 +30,6 @@ exports.postComment = (request, response, next) => {
       return insertComment(parametric, receivedComment);
     })
     .then(([comment]) => {
-      // console.log(comment);
       response.status(201).send({ comment });
     })
     .catch((error) => {
@@ -50,6 +48,19 @@ exports.getCommentById = (request, response, next) => {
     });
 };
 
+exports.patchCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  const { votes } = request.body
+
+  updateCommentsLike(comment_id, votes)
+    .then((returnObj) => {
+      response.status(200).send(returnObj);
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
 exports.deleteCommentById = (request, response, next) => {
   const { comment_id } = request.params;
 
@@ -58,7 +69,6 @@ exports.deleteCommentById = (request, response, next) => {
       return removeCommentById(comment_id);
     })
     .then((deletedComment) => {
-      // console.log(deletedComment);
       response.status(204).send(null);
     })
     .catch((error) => {

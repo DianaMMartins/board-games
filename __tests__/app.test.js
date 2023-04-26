@@ -14,9 +14,7 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  describe("/api", () => {
-    
-  })
+  describe("/api", () => {});
   describe("/api/users", () => {
     test("200: responds with an array of users with properties of: username, name and avatar_url", () => {
       return request(app)
@@ -54,7 +52,10 @@ describe("app", () => {
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
             expect(category).toHaveProperty("description", expect.any(String));
-            expect(category).toHaveProperty("img", expect.stringContaining('https://'));
+            expect(category).toHaveProperty(
+              "img",
+              expect.stringContaining("https://")
+            );
           });
         });
     });
@@ -541,6 +542,61 @@ describe("app", () => {
   describe("DELETE: /api/comments/:comment_id", () => {
     test("204: deletes comment by comment_id", () => {
       return request(app).delete("/api/comments/6").expect(204);
+    });
+  });
+  describe("PATCH: /api/comments/:parametric", () => {
+    test("200: PATCH RETURNS with an object of updated comment", () => {
+      return request(app)
+        .patch("/api/comments/2")
+        .send({ votes: 1 })
+        .expect(200)
+        .then(({ body }) => {
+          const review = body;
+          expect(review).toEqual({
+            comment_id: 2,
+            body: "My dog loved this game too!",
+            votes: 14,
+            author: "mallionaire",
+            review_id: 3,
+            created_at: '2021-01-18T10:09:05.410Z',
+          });
+        });
+    });
+    test("404: if trying to PATCH to a comment that doesn't exist, but is valid", () => {
+      return request(app)
+        .patch("/api/comments/200")
+        .send({ votes: -2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Comment not found!");
+        });
+    });
+    test("404: if trying to PATCH to a comment type that is not valid", () => {
+      return request(app)
+        .patch("/api/comments/cake")
+        .send({ votes: -2 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Invalid comment type!");
+        });
+    });
+    test("400: error message if trying to PATCH to a comment that exists but the property given is not valid", () => {
+      return request(app)
+        .patch("/api/comments/2")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Insert valid data!");
+        });
+    });
+    test("400: error message if trying to PATCH to a comment that exists and property to patch doesn't exist", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ key: 5 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Insert valid data!");
+        });
     });
   });
 });

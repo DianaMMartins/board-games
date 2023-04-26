@@ -80,7 +80,7 @@ exports.fetchReviewById = (id) => {
 
 exports.updateReviewById = (id, votes) => {
   const regex = /\d/;
-
+console.log(votes, 'should be -2');
   if (!regex.test(id)) {
     return Promise.reject("Review not valid");
   }
