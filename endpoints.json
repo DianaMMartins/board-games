@@ -142,6 +142,21 @@
       "created_at": "2021-01-18T10:09:05.410Z"
     }
   },
+  "PATCH /api/comments/:parametric_endpoint": {
+    "description": "serves an object of updated comment object with an updated property of votes",
+    "receives": { "votes": 1 },
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "comment_id": 2,
+        "body": "My dog loved this game too!",
+        "votes": 14,
+        "author": "mallionaire",
+        "review_id": 3,
+        "created_at": "2021-01-18T10:09:05.410Z"
+      }
+    }
+  },
   "DELETE /api/comments/:parametric_endpoint": {
     "description": "deletes a comment by id",
     "queries": [],

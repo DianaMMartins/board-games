@@ -13,12 +13,10 @@ exports.fetchCommentsById = (comment_id) => {
 
 exports.updateCommentsLike = (id, value) => {
   const regex = /\d/;
-console.log(value, id);
   if (!regex.test(id)) {
     return Promise.reject("Comment not valid");
   }
   if(value === undefined) {
-    console.log('invalid');
     return Promise.reject("Vote property is invalid");
   }
 

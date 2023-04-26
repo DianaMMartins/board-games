@@ -35,8 +35,8 @@ Don't forget to initialize and seed your database.
 
 ### Reviews:
 - GET -> `/api/reviews`
-- GET -> `/api/reviews/:parametric`
-- PATCH -> `/api/reviews/:parametric`
+- GET -> `/api/reviews/:id`
+- PATCH -> `/api/reviews/:id`
 
     Available Reviews queries:
     - Queries:
@@ -57,7 +57,9 @@ Don't forget to initialize and seed your database.
         - `category` that is exists in the database, defaults to give all reviews
 
 ### Comments
-- POST -> `/api/reviews/:parametric/comments`
-- GET -> `/api/reviews/:parametric/comments`
-- GET -> `/api/comments/:parametric`
-- DELETE -> `/api/comments/:parametric`
+- POST -> `/api/reviews/:id/comments`
+- GET -> `/api/reviews/:id/comments`
+- GET -> `/api/comments/:id`
+- PATCH -> `/api/comments/:id`
+(updates vote property)
+- DELETE -> `/api/comments/:id`
