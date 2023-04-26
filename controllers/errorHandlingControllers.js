@@ -24,7 +24,7 @@ exports.handleCustomErrors = (error, request, response, next) => {
     // console.log(4);
     response.status(400).send({ message: "Category doesn't exist!" });
   } else if (error === "Vote property is invalid") {
-    console.log(5);
+    // console.log(5);
     response.status(400).send({ message: "Insert valid data!" });
   } else if (error === "Can't find review") {
     // console.log(6);
